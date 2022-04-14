@@ -1,0 +1,52 @@
+program test;
+
+# A character that can bend the elements.
+class Bender {
+  int power;
+}
+
+class Waterbender << Bender {
+  int water_power;
+
+  action waterFreeze() {
+    if (my:power > 10) {
+      print("The water froze.");
+    } else {
+      print("The water did not freeze.");
+    }
+  }
+}
+
+class Firebender << Bender {
+  bool can_lightbend;
+}
+
+class Mathematician {
+  int factorial(int num) {
+    if (num == 0) {
+      return 1;
+    }
+    return num * factorial(num - 1);
+  }
+}
+
+action agniKai(Firebender a, Firebender b) {
+  if (a:power > b:power) {
+    print("a wins");
+  }
+}
+
+int strength, proficiency, intelligence;
+float power;
+char name[30];
+
+Waterbender katara;
+katara:max_hp = 100;
+katara:hp = 100;
+katara:water_power = 20;
+katara:waterFreeze();
+
+Mathematician ko_jin;
+int fibonacci_result;
+fibonacci_result = ko_jin:fibonacci(5);
+print(fibonacci_result);

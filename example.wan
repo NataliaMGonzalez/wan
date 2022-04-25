@@ -48,5 +48,7 @@ katara:waterFreeze();
 
 Mathematician ko_jin;
 int fibonacci_result;
+int fibonacci_to_do;
+fibonacci_to_do = input();
 fibonacci_result = ko_jin:fibonacci(5);
 print(fibonacci_result);

@@ -18,10 +18,10 @@ OPEN_BLOCK: "{"
 CLOSE_BLOCK: "}"
 OPEN_GROUP: "("
 CLOSE_GROUP: ")"
-ARRAY_START: "["
-ARRAY_END: "]"
-LINE_END: ";"
-MULTIPLE: ","
+_ARRAY_START: "["
+_ARRAY_END: "]"
+_LINE_END: ";"
+_MULTIPLE: ","
 
 BOOL_OP_AND: "&&"
 BOOL_OP_OR: "||"
@@ -69,7 +69,7 @@ WHITESPACE: (/ / | /\t/ )+
 // Rules
 start: program
 
-program: PROGRAM VAR_ID LINE_END global_statement+
+program: PROGRAM VAR_ID _LINE_END global_statement+
 
 global_statement: declaration
     | assignment
@@ -81,7 +81,9 @@ declaration: vars_declaration
     | function_declaration
     | class_declaration
 
-vars_declaration: declaration_type vars_declaration_id LINE_END
+vars_declaration: declaration_type vars_declaration_id _LINE_END np_end_vars_declaration
+
+np_end_vars_declaration:
 
 declaration_type: TYPE_INT
     | TYPE_FLOAT
@@ -89,11 +91,13 @@ declaration_type: TYPE_INT
     | TYPE_BOOL
     | CLASS_ID
 
-vars_declaration_id: VAR_ID (ARRAY_START INT_VALUE ARRAY_END)* [MULTIPLE vars_declaration_id]
+vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)* [_MULTIPLE vars_declaration_id]
 
-function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID OPEN_GROUP function_parameters CLOSE_GROUP OPEN_BLOCK function_body CLOSE_BLOCK
+function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID OPEN_GROUP function_parameters CLOSE_GROUP OPEN_BLOCK function_body CLOSE_BLOCK np_end_function_declaration
 
-function_parameters: (declaration_type VAR_ID [MULTIPLE function_parameters])*
+np_end_function_declaration:
+
+function_parameters: (declaration_type VAR_ID [_MULTIPLE function_parameters])*
 
 function_body: function_statement*
 
@@ -104,13 +108,15 @@ function_statement: vars_declaration
     | conditional
     | input_output
     | comment
-    | FUNCTION_RETURN expression LINE_END
+    | FUNCTION_RETURN expression _LINE_END
 
-class_declaration: CLASS_DECLARE CLASS_ID [INHERITANCE CLASS_ID] OPEN_BLOCK class_body CLOSE_BLOCK
+class_declaration: CLASS_DECLARE CLASS_ID [INHERITANCE CLASS_ID] OPEN_BLOCK class_body CLOSE_BLOCK np_end_class_declaration
+
+np_end_class_declaration:
 
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression LINE_END
+assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression _LINE_END
 
 expression: or_expression
 
@@ -157,17 +163,17 @@ var_exp: VAR_ID
     | self_attribute
     | function_eval
     | OPEN_GROUP var_exp CLOSE_GROUP
-    | var_exp (ARRAY_START INT_VALUE ARRAY_END)*
+    | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 
 instance_attribute: var_exp INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
 
 self_attribute: SELF_ATTRIBUTE INSTANCE_ATTRIBUTE VAR_ID
 
-function_call: (function_eval | var_exp) LINE_END
+function_call: (function_eval | var_exp) _LINE_END
 
 function_eval: FUNCTION_ID OPEN_GROUP arguments CLOSE_GROUP
 
-arguments: [expression [MULTIPLE arguments]]
+arguments: [expression [_MULTIPLE arguments]]
 
 conditional: START_CONDITIONAL OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK [ALT_CONDITIONAL OPEN_BLOCK function_statement* CLOSE_BLOCK]
 
@@ -176,10 +182,10 @@ cycle: CYCLE_START OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_stateme
 input_output: read
     | write 
 
-read: READ_OPERATION OPEN_GROUP filename CLOSE_GROUP LINE_END
+read: READ_OPERATION OPEN_GROUP filename CLOSE_GROUP _LINE_END
 
 filename: STRING_VALUE
 
-write: WRITE_OPERATION OPEN_GROUP expression CLOSE_GROUP LINE_END
+write: WRITE_OPERATION OPEN_GROUP expression CLOSE_GROUP _LINE_END
 
 comment: COMMENT

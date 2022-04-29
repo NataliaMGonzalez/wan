@@ -14,10 +14,10 @@ FUNCTION_RETURN: "return"
 INHERITANCE: "<<"
 INSTANCE_ATTRIBUTE: ":"
 SELF_ATTRIBUTE: "my"
-OPEN_BLOCK: "{"
-CLOSE_BLOCK: "}"
-OPEN_GROUP: "("
-CLOSE_GROUP: ")"
+_OPEN_BLOCK: "{"
+_CLOSE_BLOCK: "}"
+_OPEN_GROUP: "("
+_CLOSE_GROUP: ")"
 _ARRAY_START: "["
 _ARRAY_END: "]"
 _LINE_END: ";"
@@ -93,11 +93,11 @@ declaration_type: TYPE_INT
 
 vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)* [_MULTIPLE vars_declaration_id]
 
-function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID OPEN_GROUP function_parameters CLOSE_GROUP OPEN_BLOCK function_body CLOSE_BLOCK np_end_function_declaration
+function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID _OPEN_GROUP [function_parameters] _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK np_end_function_declaration
 
 np_end_function_declaration:
 
-function_parameters: (declaration_type VAR_ID [_MULTIPLE function_parameters])*
+function_parameters: declaration_type VAR_ID [_MULTIPLE function_parameters]
 
 function_body: function_statement*
 
@@ -110,7 +110,7 @@ function_statement: vars_declaration
     | comment
     | FUNCTION_RETURN expression _LINE_END
 
-class_declaration: CLASS_DECLARE CLASS_ID [INHERITANCE CLASS_ID] OPEN_BLOCK class_body CLOSE_BLOCK np_end_class_declaration
+class_declaration: CLASS_DECLARE CLASS_ID [INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK np_end_class_declaration
 
 np_end_class_declaration:
 
@@ -140,7 +140,7 @@ sum_expression: term
 term: factor
     | factor (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY) factor
 
-factor: OPEN_GROUP expression CLOSE_GROUP
+factor: _OPEN_GROUP expression _CLOSE_GROUP
     | numerical_constant
     | char_exp
     | string_exp
@@ -162,7 +162,7 @@ var_exp: VAR_ID
     | instance_attribute
     | self_attribute
     | function_eval
-    | OPEN_GROUP var_exp CLOSE_GROUP
+    | _OPEN_GROUP var_exp _CLOSE_GROUP
     | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 
 instance_attribute: var_exp INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
@@ -171,21 +171,21 @@ self_attribute: SELF_ATTRIBUTE INSTANCE_ATTRIBUTE VAR_ID
 
 function_call: (function_eval | var_exp) _LINE_END
 
-function_eval: FUNCTION_ID OPEN_GROUP arguments CLOSE_GROUP
+function_eval: FUNCTION_ID _OPEN_GROUP arguments _CLOSE_GROUP
 
 arguments: [expression [_MULTIPLE arguments]]
 
-conditional: START_CONDITIONAL OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK [ALT_CONDITIONAL OPEN_BLOCK function_statement* CLOSE_BLOCK]
+conditional: START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK [ALT_CONDITIONAL _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
 
-cycle: CYCLE_START OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK
+cycle: CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
 
 input_output: read
     | write 
 
-read: READ_OPERATION OPEN_GROUP filename CLOSE_GROUP _LINE_END
+read: READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
 
 filename: STRING_VALUE
 
-write: WRITE_OPERATION OPEN_GROUP expression CLOSE_GROUP _LINE_END
+write: WRITE_OPERATION _OPEN_GROUP expression _CLOSE_GROUP _LINE_END
 
 comment: COMMENT

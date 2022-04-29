@@ -19,3 +19,10 @@ class Operators(Enum):
     REL_OP_EQ = "=="
     LOG_OP_AND = "&&"
     LOG_OP_OR = "||"
+
+
+class MemorySegments(Enum):
+    DATA = 1
+    CODE = 2
+    STACK = 3
+    EXTRA = 4

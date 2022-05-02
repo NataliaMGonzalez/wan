@@ -23,8 +23,9 @@ ARRAY_END: "]"
 LINE_END: ";"
 MULTIPLE: ","
 
-BOOL_OP_AND: "&&"
-BOOL_OP_OR: "||"
+LOG_OP_AND: "&&"
+LOG_OP_OR: "||"
+LOG_OP_NOT: "!"
 BOOL_OP_NE: "<>"
 BOOL_OP_EQ: "=="
 
@@ -136,9 +137,10 @@ relop: REL_OP_LT
     | REL_OP_EQ
 
 bool_operations: bool_exp bool_op bool_exp
+    | LOG_OP_NOT bool_exp
 
-bool_op: BOOL_OP_AND
-    | BOOL_OP_OR
+bool_op: LOG_OP_AND
+    | LOG_OP_OR
     | REL_OP_NE
 
 numerical_exp: numerical_constant

@@ -33,7 +33,19 @@ def rel_op_eq(x, y):
     return x == y
 
 
-def error_function(_x, _y):
+def log_op_and(x, y):
+    return x and y
+
+
+def log_op_or(x, y):
+    return x or y
+
+
+def log_op_not(x):
+    return not x
+
+
+def error_function(_x = None, _y = None):
     raise ValueError("Type mismatch")
 
 
@@ -224,26 +236,84 @@ semantic_cube = {
         DataTypes.INT: {
             DataTypes.INT: rel_op_eq,
             DataTypes.FLOAT: rel_op_eq,
-            DataTypes.BOOL: rel_op_eq,
-            DataTypes.CHAR: rel_op_eq
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
         },
         DataTypes.FLOAT: {
             DataTypes.INT: rel_op_eq,
             DataTypes.FLOAT: rel_op_eq,
-            DataTypes.BOOL: rel_op_eq,
-            DataTypes.CHAR: rel_op_eq
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
         },
         DataTypes.CHAR: {
-            DataTypes.INT: rel_op_eq,
-            DataTypes.FLOAT: rel_op_eq,
-            DataTypes.BOOL: rel_op_eq,
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
             DataTypes.CHAR: rel_op_eq
         },
         DataTypes.BOOL: {
-            DataTypes.INT: rel_op_eq,
-            DataTypes.FLOAT: rel_op_eq,
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
             DataTypes.BOOL: rel_op_eq,
-            DataTypes.CHAR: rel_op_eq
+            DataTypes.CHAR: error_function
         }
+    },
+    Operators.LOG_OP_AND: {
+        DataTypes.INT: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.FLOAT: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.CHAR: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.BOOL: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: log_op_and,
+            DataTypes.CHAR: error_function
+        }
+    },
+    Operators.LOG_OP_OR: {
+        DataTypes.INT: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.FLOAT: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.CHAR: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: error_function,
+            DataTypes.CHAR: error_function
+        },
+        DataTypes.BOOL: {
+            DataTypes.INT: error_function,
+            DataTypes.FLOAT: error_function,
+            DataTypes.BOOL: log_op_and,
+            DataTypes.CHAR: error_function
+        }
+    },
+    Operators.LOG_OP_NOT: {
+        DataTypes.INT: error_function,
+        DataTypes.FLOAT: error_function,
+        DataTypes.CHAR: error_function,
+        DataTypes.BOOL: log_op_not
     }
 }

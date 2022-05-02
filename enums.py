@@ -19,3 +19,4 @@ class Operators(Enum):
     REL_OP_EQ = "=="
     LOG_OP_AND = "&&"
     LOG_OP_OR = "||"
+    LOG_OP_NOT = "!"

@@ -112,55 +112,39 @@ class_body: (vars_declaration | function_declaration | comment)+
 
 assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression LINE_END
 
-expression: bool_exp
-    | numerical_exp
-    | char_exp
-    | string_exp
-    | var_exp
-    | OPEN_GROUP expression CLOSE_GROUP
+expression: or_expression
 
-bool_exp: bool_constant
-    | bool_operations
-    | comparison
-    | var_exp
-    | OPEN_GROUP bool_exp CLOSE_GROUP
+or_expression: and_expression 
+    | and_expression BOOL_OP_OR and_expression
 
-bool_constant: BOOL_VALUE_TRUE
-    | BOOL_VALUE_FALSE
+and_expression: comp_expression 
+    | comp_expression BOOL_OP_AND comp_expression
 
-comparison: numerical_exp relop numerical_exp
+comp_expression: sum_expression
+    | sum_expression relop sum_expression
 
 relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-bool_operations: bool_exp bool_op bool_exp
+sum_expression: term 
+    | term (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM )term
 
-bool_op: BOOL_OP_AND
-    | BOOL_OP_OR
-    | REL_OP_NE
+term: factor
+    | factor (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY) factor
 
-numerical_exp: numerical_constant
-    | sum
-    | var_exp
-    | OPEN_GROUP numerical_exp CLOSE_GROUP
+factor: OPEN_GROUP expression CLOSE_GROUP
+    | numerical_constant
+    | char_exp
+    | string_exp
+    | bool_constant
+    | function_eval 
 
-numerical_constant: negative_num INT_VALUE
-    | negative_num FLOAT_VALUE
+numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
-negative_num: NEGATIVE_NUMBER
-    |
-
-sum: term ARIT_OPS_SUM term
-    | term ARIT_OPS_SUBTRACT term
-    | term
-
-term: factor ARIT_OPS_MULTIPLY factor
-    | factor ARIT_OPS_DIVIDE factor
-    | factor
-
-factor: numerical_exp
+bool_constant: BOOL_VALUE_TRUE
+    | BOOL_VALUE_FALSE
 
 char_exp: CHAR_VALUE
     | var_exp
@@ -185,9 +169,9 @@ function_eval: FUNCTION_ID OPEN_GROUP arguments CLOSE_GROUP
 
 arguments: [expression [MULTIPLE arguments]]
 
-conditional: START_CONDITIONAL OPEN_GROUP bool_exp CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK [ALT_CONDITIONAL OPEN_BLOCK function_statement* CLOSE_BLOCK]
+conditional: START_CONDITIONAL OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK [ALT_CONDITIONAL OPEN_BLOCK function_statement* CLOSE_BLOCK]
 
-cycle: CYCLE_START OPEN_GROUP bool_exp CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK
+cycle: CYCLE_START OPEN_GROUP expression CLOSE_GROUP OPEN_BLOCK function_statement* CLOSE_BLOCK
 
 input_output: read
     | write 

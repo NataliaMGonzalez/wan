@@ -22,17 +22,11 @@ class Firebender << Bender {
 }
 
 class Mathematician {
-  int factorial(int num) {
+  int factorial(int num, bool test) {
     if (num == 0) {
       return 1;
     }
     return num * factorial(num - 1);
-  }
-}
-
-action agniKai(Firebender a, Firebender b) {
-  if (a:power > b:power) {
-    print("a wins");
   }
 }
 

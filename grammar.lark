@@ -1,19 +1,19 @@
 // Tokens
-PROGRAM: "program"
-START_CONDITIONAL: "if"
-ALT_CONDITIONAL: "else"
-WRITE_OPERATION: "print"
-READ_OPERATION: "input"
-CYCLE_START: "while"
+_PROGRAM: "program"
+_START_CONDITIONAL: "if"
+_ALT_CONDITIONAL: "else"
+_WRITE_OPERATION: "print"
+_READ_OPERATION: "input"
+_CYCLE_START: "while"
 
 FUNCTION_DECLARE: "action"
-CLASS_DECLARE: "class"
+_CLASS_DECLARE: "class"
 COMMENT: /#[^\n]*/
-FUNCTION_RETURN: "return"
+_FUNCTION_RETURN: "return"
 
-INHERITANCE: "<<"
-INSTANCE_ATTRIBUTE: ":"
-SELF_ATTRIBUTE: "my"
+_INHERITANCE: "<<"
+_INSTANCE_ATTRIBUTE: ":"
+_SELF_ATTRIBUTE: "my"
 _OPEN_BLOCK: "{"
 _CLOSE_BLOCK: "}"
 _OPEN_GROUP: "("
@@ -61,56 +61,60 @@ CLASS_ID: /([A-Z][a-z0-9]+)+/
 FUNCTION_ID: /\b[a-z][A-Za-z0-9]*\b/
 VAR_ID: /\b[a-z_]+\b/
 
-NEW_LINE: /\n+/
-WHITESPACE: (/ / | /\t/ )+
-%ignore WHITESPACE
-%ignore NEW_LINE
+_NEW_LINE: /\n+/
+_WHITESPACE: (/ / | /\t/ )+
+%ignore _WHITESPACE
+%ignore _NEW_LINE
 
 // Rules
 start: program
 
-program: PROGRAM VAR_ID _LINE_END global_statement+
+program: program_declaration global_statement+
 
-global_statement: declaration
+program_declaration: _PROGRAM VAR_ID _LINE_END
+
+?global_statement: declaration
     | assignment
     | input_output 
     | function_call
     | comment
 
-declaration: vars_declaration
+?declaration: vars_declaration
     | function_declaration
     | class_declaration
 
-vars_declaration: declaration_type vars_declaration_id _LINE_END np_end_vars_declaration
+vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declaration_id)* _LINE_END _np_end_vars_declaration
 
-np_end_vars_declaration:
+_np_end_vars_declaration:
 
-declaration_type: TYPE_INT
+?declaration_type: TYPE_INT
     | TYPE_FLOAT
     | TYPE_CHAR
     | TYPE_BOOL
     | CLASS_ID
 
-vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)* [_MULTIPLE vars_declaration_id]
+vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID _OPEN_GROUP [function_parameters] _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK np_end_function_declaration
+function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK np_end_function_declaration
 
 np_end_function_declaration:
 
-function_parameters: declaration_type VAR_ID [_MULTIPLE function_parameters]
+_function_parameters: function_parameter? (_MULTIPLE function_parameter)*
+
+function_parameter: declaration_type VAR_ID
 
 function_body: function_statement*
 
-function_statement: vars_declaration
+?function_statement: vars_declaration
     | assignment
     | function_call
     | cycle
     | conditional
     | input_output
     | comment
-    | FUNCTION_RETURN expression _LINE_END
+    | _FUNCTION_RETURN expression _LINE_END
 
-class_declaration: CLASS_DECLARE CLASS_ID [INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK np_end_class_declaration
+class_declaration: _CLASS_DECLARE CLASS_ID [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK np_end_class_declaration
 
 np_end_class_declaration:
 
@@ -120,72 +124,72 @@ assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression
 
 expression: or_expression
 
-or_expression: and_expression 
+?or_expression: and_expression 
     | and_expression BOOL_OP_OR and_expression
 
-and_expression: comp_expression 
+?and_expression: comp_expression 
     | comp_expression BOOL_OP_AND comp_expression
 
-comp_expression: sum_expression
+?comp_expression: sum_expression
     | sum_expression relop sum_expression
 
-relop: REL_OP_LT
+?relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-sum_expression: term 
+?sum_expression: term 
     | term (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM )term
 
-term: factor
+?term: factor
     | factor (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY) factor
 
-factor: _OPEN_GROUP expression _CLOSE_GROUP
+?factor: _OPEN_GROUP expression _CLOSE_GROUP
     | numerical_constant
     | char_exp
     | string_exp
     | bool_constant
     | function_eval 
 
-numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
+?numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
-bool_constant: BOOL_VALUE_TRUE
+?bool_constant: BOOL_VALUE_TRUE
     | BOOL_VALUE_FALSE
 
-char_exp: CHAR_VALUE
+?char_exp: CHAR_VALUE
     | var_exp
 
 string_exp: STRING_VALUE
     | var_exp
 
-var_exp: VAR_ID
+?var_exp: VAR_ID
     | instance_attribute
     | self_attribute
     | function_eval
     | _OPEN_GROUP var_exp _CLOSE_GROUP
     | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-instance_attribute: var_exp INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
+instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
 
-self_attribute: SELF_ATTRIBUTE INSTANCE_ATTRIBUTE VAR_ID
+self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
 
 function_call: (function_eval | var_exp) _LINE_END
 
-function_eval: FUNCTION_ID _OPEN_GROUP arguments _CLOSE_GROUP
+function_eval: FUNCTION_ID _OPEN_GROUP [arguments] _CLOSE_GROUP
 
-arguments: [expression [_MULTIPLE arguments]]
+arguments: expression (_MULTIPLE expression)*
 
-conditional: START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK [ALT_CONDITIONAL _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
+conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK [_ALT_CONDITIONAL _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
 
-cycle: CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
+cycle: _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
 
-input_output: read
+?input_output: read
     | write 
 
-read: READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
+read: _READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
 
 filename: STRING_VALUE
 
-write: WRITE_OPERATION _OPEN_GROUP expression _CLOSE_GROUP _LINE_END
+write: _WRITE_OPERATION _OPEN_GROUP expression _CLOSE_GROUP _LINE_END
 
 comment: COMMENT

@@ -8,6 +8,14 @@ class DataTypes(Enum):
     CHAR = "char"
 
 
+class FunctionReturnTypes(Enum):
+    BOOL = "bool"
+    INT = "int"
+    FLOAT = "float"
+    CHAR = "char"
+    ACTION = "action"
+
+
 class Operators(Enum):
     ADD = "+"
     MINUS = "-"

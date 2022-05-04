@@ -1,5 +1,5 @@
 from lark import Visitor
-from enums import DataTypes
+from enums import DataTypes, FunctionReturnTypes
 
 
 def generate_functions_directory(tree):
@@ -7,48 +7,35 @@ def generate_functions_directory(tree):
     return FunctionsDirectory.functions_directory
 
 
-def get_directory(functions_directory, class_context=None):
-    directory = functions_directory
-    if class_context is not None:
-        directory = directory[class_context]
-    return directory
-
-
-def get_function_parameters(parameters_node):
-    parameters = []
-    while parameters_node is not None:
-        declaration_type, var_id, next_parameter = parameters_node.children
-        var_type = DataTypes[declaration_type.children[0].value.upper()]
-        parameters.append(var_type)
-        parameters_node = next_parameter
-    return parameters
-
-
-def get_return_type(return_type):
-    if hasattr(return_type, "type"):
-        return return_type.value
-    return DataTypes[return_type.children[0].value.upper()]
-
-
 class FunctionsDirectory(Visitor):
     class_context = None
     functions_directory = {}
 
+    def get_current_directory(self):
+        directory = self.functions_directory
+        if self.class_context is not None:
+            directory = directory[self.class_context]
+        return directory
+
     def class_declaration(self, tree):
-        class_id = tree.children[1].value
+        class_id = tree.children[0].value
+        self.get_current_directory()[class_id] = {}
         self.class_context = class_id
-        if class_id not in self.functions_directory:
-            self.functions_directory[class_id] = {}
 
     def np_end_class_declaration(self, _tree):
         self.class_context = None
 
     def function_declaration(self, tree):
-        return_type, id, parameters, body, _ = tree.children
+        print(tree.pretty())
+        return_type, id, *parameters, body, _ = tree.children
         function_id = id.value
-        parameters = get_function_parameters(parameters)
-        directory = get_directory(self.functions_directory, self.class_context)
-        return_type = get_return_type(return_type)
+        directory = self.get_current_directory()
+        if function_id in directory:
+            raise TypeError(
+                "Function \"{}\" already declared in this scope.".format(function_id))
+        return_type = FunctionReturnTypes(return_type.value)
+        parameters = list(
+            map(lambda p: DataTypes(p.children[0].value), parameters))
         table_entry = {
             "returns": return_type,
             "parameters": parameters

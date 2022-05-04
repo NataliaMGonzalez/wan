@@ -4,7 +4,7 @@ from variables_table import generate_variables_table
 from functions_directory import generate_functions_directory
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/expressions-and-functions.wan", 'r').read()
+code = open("examples/full-functionality.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 

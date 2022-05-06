@@ -35,6 +35,13 @@ class VariablesTable(Visitor):
         self.get_current_table()[function_id] = {}
         self.function_context = function_id
 
+    def function_parameter(self, tree):
+        var_type, var_name = tree.children
+        var_type = DataTypes(var_type.value)
+        new_address = assign_to_memory(var_type, None)
+        table = self.get_current_table()
+        table[var_name.value] = new_address
+
     def np_end_function_declaration(self, _tree):
         self.function_context = None
 

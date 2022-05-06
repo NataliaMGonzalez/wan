@@ -50,11 +50,12 @@ counters = {
     DataTypes.INT: INT_START_POSITION,
     DataTypes.FLOAT: FLOAT_START_POSITION,
     DataTypes.BOOL: BOOL_START_POSITION,
-    DataTypes.CHAR: CHAR_START_POSITION
+    DataTypes.CHAR: CHAR_START_POSITION,
+    MemorySegments.EXTRA: ES_START_POSITION,
 }
 
 
-def check_memory_availability(var_type):
+def check_ds_memory_availability(var_type):
     counter = counters[var_type]
     start_position = DS_START_POSITIONS[var_type]
     memory_avilable = DS_RESERVED_MEM[var_type]
@@ -63,7 +64,7 @@ def check_memory_availability(var_type):
 
 
 def assign_to_memory(var_type, value):
-    check_memory_availability(var_type)
+    check_ds_memory_availability(var_type)
     memory_address = counters[var_type]
     memory[memory_address] = value
     counters[var_type] += 1
@@ -82,3 +83,17 @@ def get_type_by_address(address):
     if address >= INT_START_POSITION:
         return DataTypes.INT
     return "Not a variable."
+
+
+def check_es_memory_availability():
+    counter = counters[MemorySegments.EXTRA]
+    if counter >= ES_START_POSITION + RESERVED_MEMORY[MemorySegments.EXTRA]:
+        raise Exception("Memory is full")
+
+
+def assign_constant(value):
+    check_es_memory_availability()
+    memory_address = counters[MemorySegments.EXTRA]
+    memory[memory_address] = value
+    counters[MemorySegments.EXTRA] += 1
+    return memory_address

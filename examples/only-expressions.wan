@@ -1,6 +1,5 @@
 program test;
 
 int a, b, c;
-a = 2 + 6;
-b = a * 5;
-c = b * (a + 7);
+a = 1 * 2 + 3 / 4 + 5;
+

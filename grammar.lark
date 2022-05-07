@@ -124,32 +124,40 @@ assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression
 
 expression: or_expression
 
-?or_expression: and_expression 
-    | and_expression BOOL_OP_OR and_expression
+?or_expression: and_expression BOOL_OP_OR and_expression
+    | and_expression
 
-?and_expression: comp_expression 
-    | comp_expression BOOL_OP_AND comp_expression
+?and_expression: comp_expression BOOL_OP_AND comp_expression
+    | comp_expression 
 
-?comp_expression: sum_expression
-    | sum_expression relop sum_expression
+?comp_expression: sum_expression relop sum_expression
+    | sum_expression 
 
 ?relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-?sum_expression: term 
-    | term (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM )term
+?sum_expression: term sum_expression_operator term add_quadruple
+    | term 
 
-?term: factor
-    | factor (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY) factor
+sum_expression_operator: ARIT_OPS_SUBTRACT | ARIT_OPS_SUM
 
-?factor: _OPEN_GROUP expression _CLOSE_GROUP
-    | numerical_constant
+?term: factor term_operator factor add_quadruple
+    | factor
+
+term_operator: ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY
+
+?add_quadruple:
+
+?factor: numerical_constant
     | char_exp
     | string_exp
     | bool_constant
-    | function_eval 
+    | function_eval
+    | expression
+    | _OPEN_GROUP expression _CLOSE_GROUP
+
 
 ?numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 

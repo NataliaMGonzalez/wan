@@ -83,9 +83,7 @@ program_declaration: _PROGRAM VAR_ID _LINE_END
     | function_declaration
     | class_declaration
 
-vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declaration_id)* _LINE_END _np_end_vars_declaration
-
-_np_end_vars_declaration:
+vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declaration_id)* _LINE_END
 
 ?declaration_type: TYPE_INT
     | TYPE_FLOAT
@@ -120,42 +118,46 @@ np_end_class_declaration:
 
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression _LINE_END
+assignment: assignment_var assignment_operator expression _LINE_END np_add_assignment_quadruple
+
+assignment_var: VAR_ID | instance_attribute | self_attribute
+
+assignment_operator: ASSIGNMENT
 
 expression: or_expression
 
-?or_expression: and_expression BOOL_OP_OR and_expression
-    | and_expression
+?or_expression: and_expression (or_expression_operator and_expression np_add_quadruple)?
 
-?and_expression: comp_expression BOOL_OP_AND comp_expression
-    | comp_expression 
+or_expression_operator: BOOL_OP_OR
 
-?comp_expression: sum_expression relop sum_expression
-    | sum_expression 
+?and_expression: comp_expression (and_expression_operator comp_expression np_add_quadruple)?
 
-?relop: REL_OP_LT
+and_expression_operator: BOOL_OP_AND
+
+?comp_expression: sum_expression (relop sum_expression np_add_quadruple)?
+
+relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-?sum_expression: term sum_expression_operator term add_quadruple
-    | term 
+?sum_expression: term (sum_expression_operator term np_add_quadruple)*
 
 sum_expression_operator: ARIT_OPS_SUBTRACT | ARIT_OPS_SUM
 
-?term: factor term_operator factor add_quadruple
-    | factor
+?term: factor (term_operator factor np_add_quadruple)*
 
 term_operator: ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY
 
-?add_quadruple:
+?np_add_assignment_quadruple:
+
+?np_add_quadruple:
 
 ?factor: numerical_constant
     | char_exp
     | string_exp
     | bool_constant
     | function_eval
-    | expression
     | _OPEN_GROUP expression _CLOSE_GROUP
 
 

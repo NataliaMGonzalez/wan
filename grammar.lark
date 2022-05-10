@@ -118,40 +118,26 @@ np_end_class_declaration:
 
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: assignment_var assignment_operator expression _LINE_END np_add_assignment_quadruple
+assignment: assignment_var ASSIGNMENT expression _LINE_END
 
-assignment_var: VAR_ID | instance_attribute | self_attribute
-
-assignment_operator: ASSIGNMENT
+?assignment_var: VAR_ID | instance_attribute | self_attribute
 
 expression: or_expression
 
-?or_expression: and_expression (or_expression_operator and_expression np_add_quadruple)?
+?or_expression: and_expression (BOOL_OP_OR and_expression)?
 
-or_expression_operator: BOOL_OP_OR
+?and_expression: comp_expression (BOOL_OP_AND comp_expression)?
 
-?and_expression: comp_expression (and_expression_operator comp_expression np_add_quadruple)?
+?comp_expression: sum_expression (relop sum_expression)?
 
-and_expression_operator: BOOL_OP_AND
-
-?comp_expression: sum_expression (relop sum_expression np_add_quadruple)?
-
-relop: REL_OP_LT
+?relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-?sum_expression: term (sum_expression_operator term np_add_quadruple)*
+?sum_expression: (sum_expression (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM))? term
 
-sum_expression_operator: ARIT_OPS_SUBTRACT | ARIT_OPS_SUM
-
-?term: factor (term_operator factor np_add_quadruple)*
-
-term_operator: ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY
-
-?np_add_assignment_quadruple:
-
-?np_add_quadruple:
+?term: (term (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY))? factor
 
 ?factor: numerical_constant
     | char_exp
@@ -160,8 +146,7 @@ term_operator: ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY
     | function_eval
     | _OPEN_GROUP expression _CLOSE_GROUP
 
-
-?numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
+numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
 ?bool_constant: BOOL_VALUE_TRUE
     | BOOL_VALUE_FALSE

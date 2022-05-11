@@ -3,12 +3,12 @@ from enums import Operators
 
 
 def add_expression_quadruple(self, operator):
-    right_operand = self.stackAddresses.pop()
-    left_operand = self.stackAddresses.pop()
+    right_operand = self.addresses_stack.pop()
+    left_operand = self.addresses_stack.pop()
     temp_name = "t{}".format(self.temp_count)
     quad = (operator, left_operand, right_operand, temp_name)
     self.quadruples.append(quad)
-    self.stackAddresses.append(temp_name)
+    self.addresses_stack.append(temp_name)
     self.temp_count += 1
 
 
@@ -33,5 +33,12 @@ def term(self, tree):
 
 
 def numerical_constant(self, tree):
+    # Exchange token with setting constant in memory and returning its address
     num_const = tree.children[1].value
-    self.stackAddresses.append(num_const)
+    self.addresses_stack.append(num_const)
+
+
+def bool_constant(self, tree):
+    # Exchange token with setting constant in memory and returning its address
+    num_const = tree.children[0].value
+    self.addresses_stack.append(num_const)

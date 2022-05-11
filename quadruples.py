@@ -11,5 +11,5 @@ class Quadruples(Visitor_Recursive):
                              comp_expression, sum_expression, term, numerical_constant)
 
     quadruples = []
-    stackAddresses = []
-    temp_count = 1
+    addresses_stack = []
+    temp_count = 1  # To be deleted after implementing memory

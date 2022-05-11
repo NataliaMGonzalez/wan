@@ -1,5 +1,15 @@
-from lark import v_args
+from lark import Token
 from enums import Operators
+
+
+def get_variable_address(self, variable):
+    # TODO: Search for memory address of variable and append that address to the stack
+    if isinstance(variable, Token):
+        return variable.value
+    if (variable.data == "self_attribute"):
+        return "my:{}".format(variable.children[0].value)
+    if (variable.data == "instance_attribute"):
+        return "instance_attribute"
 
 
 def add_expression_quadruple(self, operator):
@@ -42,3 +52,15 @@ def bool_constant(self, tree):
     # Exchange token with setting constant in memory and returning its address
     num_const = tree.children[0].value
     self.addresses_stack.append(num_const)
+
+
+def assignment_var(self, tree):
+    variable = tree.children[0]
+    var_name = get_variable_address(self, variable)
+    self.addresses_stack.append(var_name)
+
+
+def var_exp(self, tree):
+    variable = tree.children[0]
+    var_name = get_variable_address(self, variable)
+    self.addresses_stack.append(var_name)

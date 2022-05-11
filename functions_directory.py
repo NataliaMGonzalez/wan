@@ -26,7 +26,6 @@ class FunctionsDirectory(Visitor):
         self.class_context = None
 
     def function_declaration(self, tree):
-        print(tree.pretty())
         return_type, id, *parameters, body, _ = tree.children
         function_id = id.value
         directory = self.get_current_directory()

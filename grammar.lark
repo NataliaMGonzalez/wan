@@ -120,7 +120,7 @@ class_body: (vars_declaration | function_declaration | comment)+
 
 assignment: assignment_var ASSIGNMENT expression _LINE_END
 
-?assignment_var: VAR_ID | instance_attribute | self_attribute
+assignment_var: VAR_ID | instance_attribute | self_attribute
 
 expression: or_expression
 
@@ -143,30 +143,29 @@ expression: or_expression
     | char_exp
     | string_exp
     | bool_constant
-    | function_eval
+    | var_exp
     | _OPEN_GROUP expression _CLOSE_GROUP
 
 numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
-?bool_constant: BOOL_VALUE_TRUE
-    | BOOL_VALUE_FALSE
+bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 
-?char_exp: CHAR_VALUE
+char_exp: CHAR_VALUE
     | var_exp
 
 string_exp: STRING_VALUE
     | var_exp
 
-?var_exp: VAR_ID
-    | instance_attribute
+var_exp: VAR_ID
     | self_attribute
+    | instance_attribute
     | function_eval
     | _OPEN_GROUP var_exp _CLOSE_GROUP
     | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
-
 self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
+
+instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
 
 function_call: (function_eval | var_exp) _LINE_END
 
@@ -178,8 +177,7 @@ conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK 
 
 cycle: _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
 
-?input_output: read
-    | write 
+?input_output: read | write 
 
 read: _READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
 

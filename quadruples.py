@@ -7,8 +7,9 @@ def generate_quadruples(tree):
 
 
 class Quadruples(Visitor_Recursive):
-    from expressions import (or_expression, and_expression,
-                             comp_expression, sum_expression, term, numerical_constant)
+    from expressions import (or_expression, and_expression, comp_expression,
+                             sum_expression, term, numerical_constant, assignment_var, var_exp)
+    from assignments import assignment
 
     quadruples = []
     addresses_stack = []

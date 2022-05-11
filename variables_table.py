@@ -1,15 +1,15 @@
-from lark import Visitor
+from lark.visitors import Visitor_Recursive
 from enums import DataTypes
 from numpy import prod
 from memory_manager import assign_to_memory
 
 
 def generate_variables_table(tree):
-    VariablesTable().visit_topdown(tree)
+    VariablesTable().visit(tree)
     return VariablesTable.variables_table
 
 
-class VariablesTable(Visitor):
+class VariablesTable(Visitor_Recursive):
     class_context = None
     function_context = None
     variables_table = {}
@@ -22,20 +22,27 @@ class VariablesTable(Visitor):
             table = table[self.function_context]
         return table
 
-    def class_declaration(self, tree):
+    def class_id(self, tree):
         class_id = tree.children[0].value
         self.get_current_table()[class_id] = {}
         self.class_context = class_id
 
-    def np_end_class_declaration(self, _tree):
+    def class_declaration(self, _tree):
         self.class_context = None
 
-    def function_declaration(self, tree):
-        function_id = tree.children[1].value
+    def function_id(self, tree):
+        function_id = tree.children[0].value
         self.get_current_table()[function_id] = {}
         self.function_context = function_id
 
-    def np_end_function_declaration(self, _tree):
+    def function_parameter(self, tree):
+        var_type, var_name = tree.children
+        var_type = DataTypes(var_type.value)
+        new_address = assign_to_memory(var_type, None)
+        table = self.get_current_table()
+        table[var_name.value] = new_address
+
+    def function_declaration(self, _tree):
         self.function_context = None
 
     def vars_declaration(self, tree):
@@ -56,6 +63,3 @@ class VariablesTable(Visitor):
                 table[(var_name, "size")] = sizes
             for _ in range(1, total_size):
                 assign_to_memory(var_type, None)
-
-    def np_end_vars_declaration(self, _tree):
-        self.function_context = None

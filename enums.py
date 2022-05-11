@@ -17,6 +17,7 @@ class FunctionReturnTypes(Enum):
 
 
 class Operators(Enum):
+    ASSIGN = "="
     ADD = "+"
     MINUS = "-"
     MULTIPLY = "*"

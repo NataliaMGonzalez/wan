@@ -83,9 +83,7 @@ program_declaration: _PROGRAM VAR_ID _LINE_END
     | function_declaration
     | class_declaration
 
-vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declaration_id)* _LINE_END _np_end_vars_declaration
-
-_np_end_vars_declaration:
+vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declaration_id)* _LINE_END
 
 ?declaration_type: TYPE_INT
     | TYPE_FLOAT
@@ -95,7 +93,9 @@ _np_end_vars_declaration:
 
 vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK np_end_function_declaration
+function_declaration: (FUNCTION_DECLARE | declaration_type) function_id _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK
+
+function_id: FUNCTION_ID
 
 np_end_function_declaration:
 
@@ -114,72 +114,62 @@ function_body: function_statement*
     | comment
     | _FUNCTION_RETURN expression _LINE_END
 
-class_declaration: _CLASS_DECLARE CLASS_ID [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK np_end_class_declaration
+class_declaration: _CLASS_DECLARE class_id [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK
+
+class_id: CLASS_ID
 
 np_end_class_declaration:
 
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: (VAR_ID | instance_attribute | self_attribute) ASSIGNMENT expression _LINE_END
+assignment: assignment_var ASSIGNMENT expression _LINE_END
+
+assignment_var: VAR_ID | instance_attribute | self_attribute
 
 expression: or_expression
 
-?or_expression: and_expression BOOL_OP_OR and_expression
-    | and_expression
+?or_expression: and_expression (BOOL_OP_OR and_expression)?
 
-?and_expression: comp_expression BOOL_OP_AND comp_expression
-    | comp_expression 
+?and_expression: comp_expression (BOOL_OP_AND comp_expression)?
 
-?comp_expression: sum_expression relop sum_expression
-    | sum_expression 
+?comp_expression: sum_expression (relop sum_expression)?
 
 ?relop: REL_OP_LT
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
 
-?sum_expression: term sum_expression_operator term add_quadruple
-    | term 
+?sum_expression: (sum_expression (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM))? term
 
-sum_expression_operator: ARIT_OPS_SUBTRACT | ARIT_OPS_SUM
-
-?term: factor term_operator factor add_quadruple
-    | factor
-
-term_operator: ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY
-
-?add_quadruple:
+?term: (term (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY))? factor
 
 ?factor: numerical_constant
     | char_exp
     | string_exp
     | bool_constant
-    | function_eval
-    | expression
+    | var_exp
     | _OPEN_GROUP expression _CLOSE_GROUP
 
+numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
-?numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
+bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 
-?bool_constant: BOOL_VALUE_TRUE
-    | BOOL_VALUE_FALSE
-
-?char_exp: CHAR_VALUE
+char_exp: CHAR_VALUE
     | var_exp
 
 string_exp: STRING_VALUE
     | var_exp
 
-?var_exp: VAR_ID
-    | instance_attribute
+var_exp: VAR_ID
     | self_attribute
+    | instance_attribute
     | function_eval
     | _OPEN_GROUP var_exp _CLOSE_GROUP
     | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
-
 self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
+
+instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
 
 function_call: (function_eval | var_exp) _LINE_END
 
@@ -191,8 +181,7 @@ conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK 
 
 cycle: _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
 
-?input_output: read
-    | write 
+?input_output: read | write 
 
 read: _READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
 

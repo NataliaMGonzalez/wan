@@ -93,7 +93,9 @@ vars_declaration: declaration_type vars_declaration_id (_MULTIPLE vars_declarati
 
 vars_declaration_id: VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)*
 
-function_declaration: (FUNCTION_DECLARE | declaration_type) FUNCTION_ID _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK np_end_function_declaration
+function_declaration: (FUNCTION_DECLARE | declaration_type) function_id _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK
+
+function_id: FUNCTION_ID
 
 np_end_function_declaration:
 
@@ -112,7 +114,9 @@ function_body: function_statement*
     | comment
     | _FUNCTION_RETURN expression _LINE_END
 
-class_declaration: _CLASS_DECLARE CLASS_ID [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK np_end_class_declaration
+class_declaration: _CLASS_DECLARE class_id [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK
+
+class_id: CLASS_ID
 
 np_end_class_declaration:
 

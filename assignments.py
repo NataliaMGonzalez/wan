@@ -1,8 +1,7 @@
 from enums import Operators
 
 
-def assignment(self, tree):
-    print(tree.pretty())
+def assignment(self, _tree):
     operand = self.addresses_stack.pop()
     var_name = self.addresses_stack.pop()
     temp_name = "t{}".format(self.temp_count)

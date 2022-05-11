@@ -2,7 +2,7 @@ from lark_parser import parseTree
 from pprint import PrettyPrinter
 from variables_table import generate_variables_table
 from functions_directory import generate_functions_directory
-from quadruples_linear_statements import generate_quadruples
+from quadruples import generate_quadruples
 
 grammar = open("grammar.lark", 'r').read()
 code = open("examples/only-expressions.wan", 'r').read()
@@ -10,10 +10,10 @@ code = open("examples/only-expressions.wan", 'r').read()
 tree = parseTree(grammar, code)
 
 variables_table = generate_variables_table(tree)
-
-quadruples = generate_quadruples(tree)
-print("quadruples: ")
-print(*quadruples, sep="\n")
+PrettyPrinter().pprint(variables_table)
 
 functions_directory = generate_functions_directory(tree)
 PrettyPrinter().pprint(functions_directory)
+
+quadruples = generate_quadruples(tree)
+PrettyPrinter().pprint(quadruples)

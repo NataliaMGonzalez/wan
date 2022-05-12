@@ -35,3 +35,8 @@ class MemorySegments(Enum):
     CODE = 2
     STACK = 3
     EXTRA = 4
+
+class InstructionPointerJump(Enum):
+    GOTOF = "go_to_F"
+    GOTOT = "go_to_T"
+    GOTO = "go_to"

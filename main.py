@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 from memory_manager import memory
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/only-expressions.wan", 'r').read()
+code = open("examples/expressions-and-ifs.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 # print("Parse Tree:")
@@ -16,7 +16,6 @@ tree = parseTree(grammar, code)
 variables_table = generate_variables_table(tree)
 print("\nVariables Table:")
 PrettyPrinter().pprint(variables_table)
-globals.variables_table = variables_table
 
 functions_directory = generate_functions_directory(tree)
 print("\nFunctions Directory:")

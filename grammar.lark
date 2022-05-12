@@ -177,7 +177,11 @@ function_eval: FUNCTION_ID _OPEN_GROUP [arguments] _CLOSE_GROUP
 
 arguments: expression (_MULTIPLE expression)*
 
-conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK [_ALT_CONDITIONAL _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
+conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP np_conditional_gotof _OPEN_BLOCK function_statement* _CLOSE_BLOCK [_ALT_CONDITIONAL np_conditional_else _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
+
+np_conditional_gotof:
+np_conditional_else:
+np_conditional_end:
 
 cycle: _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
 

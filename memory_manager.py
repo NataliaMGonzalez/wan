@@ -1,6 +1,8 @@
 from enums import DataTypes, MemorySegments
 
 
+memory = {}
+
 RESERVED_MEMORY = {
     MemorySegments.DATA: {
         DataTypes.INT: 1000,
@@ -22,6 +24,13 @@ FLOAT_START_POSITION = INT_START_POSITION + DS_RESERVED_MEM[DataTypes.INT]
 BOOL_START_POSITION = FLOAT_START_POSITION + DS_RESERVED_MEM[DataTypes.FLOAT]
 CHAR_START_POSITION = BOOL_START_POSITION + DS_RESERVED_MEM[DataTypes.BOOL]
 
+DS_START_POSITIONS = {
+    DataTypes.INT: INT_START_POSITION,
+    DataTypes.FLOAT: FLOAT_START_POSITION,
+    DataTypes.BOOL: BOOL_START_POSITION,
+    DataTypes.CHAR: CHAR_START_POSITION,
+}
+
 # Code Segment section of the memory
 CS_START_POSITION = 5000
 assert(CS_START_POSITION >= CHAR_START_POSITION +
@@ -37,15 +46,8 @@ ES_START_POSITION = 9000
 assert(ES_START_POSITION >= SS_START_POSITION +
        RESERVED_MEMORY[MemorySegments.STACK])
 
-DS_START_POSITIONS = {
-    DataTypes.INT: INT_START_POSITION,
-    DataTypes.FLOAT: FLOAT_START_POSITION,
-    DataTypes.BOOL: BOOL_START_POSITION,
-    DataTypes.CHAR: CHAR_START_POSITION,
-}
 
-memory = {}
-
+# Counters for data types and memory segments
 counters = {
     DataTypes.INT: INT_START_POSITION,
     DataTypes.FLOAT: FLOAT_START_POSITION,
@@ -55,7 +57,11 @@ counters = {
 }
 
 
-def check_ds_memory_availability(var_type):
+def check_ds_memory_availability(var_type: DataTypes):
+    """
+    Checks that the Data Memory segment still has enough space for adding
+    another address and raises an error if not.
+    """
     counter = counters[var_type]
     start_position = DS_START_POSITIONS[var_type]
     memory_avilable = DS_RESERVED_MEM[var_type]
@@ -63,7 +69,11 @@ def check_ds_memory_availability(var_type):
         raise Exception("Memory is full")
 
 
-def assign_to_memory(var_type, value):
+def assign_to_memory(var_type: DataTypes, value: any) -> int:
+    """
+    Based on the data type, place value in memory. \n
+    Returns the resulting memory address.
+    """
     check_ds_memory_availability(var_type)
     memory_address = counters[var_type]
     memory[memory_address] = value
@@ -71,9 +81,17 @@ def assign_to_memory(var_type, value):
     return memory_address
 
 
-def get_type_by_address(address):
-    if address > CHAR_START_POSITION + DS_RESERVED_MEM[DataTypes.CHAR]:
-        return "Not a variable."
+def get_type_by_address(address: int) -> DataTypes:
+    """
+    Based on a memory address from the Data segment, return the Data Type. \n
+    If given address is not in range for an int, float, char or bool, raises an
+    exception.
+    """
+    DS_END_POSITION = CHAR_START_POSITION + DS_RESERVED_MEM[DataTypes.CHAR]
+    not_a_data_segment_address = address < DS_START_POSITION or address >= DS_END_POSITION
+    if not_a_data_segment_address:
+        raise Exception("")
+
     if address >= CHAR_START_POSITION:
         return DataTypes.CHAR
     if address >= BOOL_START_POSITION:
@@ -82,16 +100,23 @@ def get_type_by_address(address):
         return DataTypes.FLOAT
     if address >= INT_START_POSITION:
         return DataTypes.INT
-    return "Not a variable."
 
 
 def check_es_memory_availability():
+    """
+    Checks that the Extra Memory segment still has enough space for adding
+    another address and raises an error if not.
+    """
     counter = counters[MemorySegments.EXTRA]
     if counter >= ES_START_POSITION + RESERVED_MEMORY[MemorySegments.EXTRA]:
         raise Exception("Memory is full")
 
 
-def assign_constant(value):
+def assign_constant(value: any) -> int:
+    """
+    Allocates and assigns a value into the Extra Memory segment. \n
+    Returns its new address.
+    """
     check_es_memory_availability()
     memory_address = counters[MemorySegments.EXTRA]
     memory[memory_address] = value

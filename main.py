@@ -10,18 +10,23 @@ grammar = open("grammar.lark", 'r').read()
 code = open("examples/only-expressions.wan", 'r').read()
 
 tree = parseTree(grammar, code)
+# print("Parse Tree:")
+# print(tree.pretty())
 
 variables_table = generate_variables_table(tree)
-print("Variables table:")
+print("\nVariables Table:")
 PrettyPrinter().pprint(variables_table)
 globals.variables_table = variables_table
 
 functions_directory = generate_functions_directory(tree)
+print("\nFunctions Directory:")
 PrettyPrinter().pprint(functions_directory)
 globals.functions_directory = functions_directory
 
 quadruples = generate_quadruples(tree)
+print("\nQuadruples:")
 PrettyPrinter().pprint(quadruples)
 globals.quadruples = quadruples
 
-print(globals.memory)
+print("\nMemory:")
+PrettyPrinter().pprint(globals.memory)

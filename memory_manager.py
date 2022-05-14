@@ -1,7 +1,8 @@
+import globals
 from enums import DataTypes, MemorySegments
 
 
-memory = {}
+memory = globals.memory
 
 RESERVED_MEMORY = {
     MemorySegments.DATA: {

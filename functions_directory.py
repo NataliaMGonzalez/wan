@@ -1,7 +1,6 @@
 import globals
-from pyclbr import Function
 from lark.visitors import Visitor_Recursive
-from enums import DataTypes, FunctionReturnTypes
+from enums import DataTypes
 from addresses_manager import assign_to_memory
 
 

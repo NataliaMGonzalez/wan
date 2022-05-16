@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
 from numpy import prod
@@ -24,7 +25,7 @@ class VariablesTable(Visitor_Recursive):
 
     def class_id(self, tree):
         class_id = tree.children[0].value
-        self.get_current_table()[class_id] = {}
+        self.get_current_table()[class_id] = OrderedDict()
         self.class_context = class_id
 
     def class_declaration(self, _tree):
@@ -32,7 +33,7 @@ class VariablesTable(Visitor_Recursive):
 
     def function_id(self, tree):
         function_id = tree.children[0].value
-        self.get_current_table()[function_id] = {}
+        self.get_current_table()[function_id] = OrderedDict()
         self.function_context = function_id
 
     def function_parameter(self, tree):

@@ -1,14 +1,17 @@
 program test;
 
+int a, b, c;
+
 # A character that can bend the elements.
 int factorial(int n) {
-  if (n < 2) {
-    return 1;
+  bool is_last;
+  is_last = n - 1;
+  if (is_last) {
+    return 2;
   }
-  return n * factorial(n - 1);
+  return n * factorial(n - 3);
 }
 
-int a, b, c;
-a = factorial(5);
-b = a * 10;
+a = factorial(4);
+b = a * 5;
 c = 6;

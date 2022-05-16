@@ -75,7 +75,9 @@ program_declaration: _PROGRAM VAR_ID _LINE_END
 
 ?global_statement: declaration
     | assignment
-    | input_output 
+    | input_output
+    | cycle
+    | conditional
     | function_call
     | comment
 
@@ -97,8 +99,6 @@ function_declaration: (FUNCTION_DECLARE | declaration_type) function_id _OPEN_GR
 
 function_id: FUNCTION_ID
 
-np_end_function_declaration:
-
 _function_parameters: function_parameter? (_MULTIPLE function_parameter)*
 
 function_parameter: declaration_type VAR_ID
@@ -107,10 +107,10 @@ function_body: function_statement*
 
 ?function_statement: vars_declaration
     | assignment
-    | function_call
+    | input_output
     | cycle
     | conditional
-    | input_output
+    | function_call
     | comment
     | _FUNCTION_RETURN expression _LINE_END
 
@@ -118,11 +118,9 @@ class_declaration: _CLASS_DECLARE class_id [_INHERITANCE CLASS_ID] _OPEN_BLOCK c
 
 class_id: CLASS_ID
 
-np_end_class_declaration:
-
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: assignment_var ASSIGNMENT expression _LINE_END
+assignment: assignment_var ASSIGNMENT (read | expression) _LINE_END
 
 assignment_var: VAR_ID | instance_attribute | self_attribute
 
@@ -173,9 +171,7 @@ instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
 
 function_call: (function_eval | var_exp) _LINE_END
 
-function_eval: FUNCTION_ID _OPEN_GROUP [arguments] _CLOSE_GROUP
-
-arguments: expression (_MULTIPLE expression)*
+function_eval: FUNCTION_ID _OPEN_GROUP expression? (_MULTIPLE expression)* _CLOSE_GROUP
 
 conditional: _START_CONDITIONAL _OPEN_GROUP expression _CLOSE_GROUP np_conditional_gotof _OPEN_BLOCK function_statement* _CLOSE_BLOCK [_ALT_CONDITIONAL np_conditional_else _OPEN_BLOCK function_statement* _CLOSE_BLOCK]
 

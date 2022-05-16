@@ -1,5 +1,5 @@
-from lark.visitors import Visitor_Recursive
 from lark import Tree
+from lark.visitors import Visitor_Recursive
 import globals
 
 
@@ -18,6 +18,7 @@ class Quadruples(Visitor_Recursive):
         np_conditional_gotof, np_conditional_else, conditional)
     from quadruples.cycles import np_cycle_start, np_cycle_gotof, np_cycle_end
     from quadruples.input_output import np_write, read
+    from quadruples.functions import function_eval
 
     class_context = None
     function_context = None
@@ -57,6 +58,8 @@ class Quadruples(Visitor_Recursive):
 
     def function_id(self, tree: Tree):
         function_id: str = tree.children[0].value
+        directory = self.get_current_functions_directory()
+        directory[function_id]["position"] = len(self.quadruples)
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):

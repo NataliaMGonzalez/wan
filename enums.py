@@ -46,3 +46,11 @@ class InstructionPointerJump(Enum):
 class InputOutputInstructions(Enum):
     READ = "READ"
     WRITE = "PRINT"
+
+
+class FunctionOperators(Enum):
+    GOSUB = "GOSUB"
+    ERA = "ERA"
+    END_FUNC = "ENDFunc"
+    PUSH_IN_STACK = "PUSH_STACK"
+    PULL_FROM_STACK = "PULL_FROM_STACK"

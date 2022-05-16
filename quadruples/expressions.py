@@ -1,7 +1,7 @@
 import globals
 from lark import Token
 from enums import Operators
-from memory_manager import assign_constant
+from memory_manager import assign_into_extra_segment
 from variables_table import VariablesTable
 
 
@@ -21,12 +21,10 @@ def get_variable_address(self, variable):
 def add_expression_quadruple(self, operator):
     right_operand = self.addresses_stack.pop()
     left_operand = self.addresses_stack.pop()
-    temp_name = "t{}".format(self.temp_count)
-    quad = (operator, left_operand, right_operand, temp_name)
+    address = assign_into_extra_segment(None)
+    quad = (operator, left_operand, right_operand, address)
     self.quadruples.append(quad)
-    self.addresses_stack.append(temp_name)
-    self.temp_count += 1
-
+    self.addresses_stack.append(address)
 
 def or_expression(self, tree):
     add_expression_quadruple(self, Operators(tree.children[1].value))
@@ -51,7 +49,7 @@ def term(self, tree):
 def numerical_constant(self, tree):
     # Exchange token with setting constant in memory and returning its address
     num_const = tree.children[1].value
-    address = assign_constant(num_const)
+    address = assign_into_extra_segment(num_const)
     self.addresses_stack.append(address)
 
 

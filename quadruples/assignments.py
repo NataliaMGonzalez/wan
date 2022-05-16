@@ -1,11 +1,12 @@
 from enums import Operators
+from memory_manager import assign_into_extra_segment
+
 
 
 def assignment(self, _tree):
     operand = self.addresses_stack.pop()
     var_name = self.addresses_stack.pop()
-    temp_name = "t{}".format(self.temp_count)
-    quad = (Operators.ASSIGN, var_name, operand, temp_name)
+    address = assign_into_extra_segment(None)
+    quad = (Operators.ASSIGN, var_name, operand, address)
     self.quadruples.append(quad)
-    self.addresses_stack.append(temp_name)
-    self.temp_count += 1
+    self.addresses_stack.append(address)

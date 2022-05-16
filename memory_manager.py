@@ -113,7 +113,7 @@ def check_es_memory_availability():
         raise Exception("Memory is full")
 
 
-def assign_constant(value: any) -> int:
+def assign_into_extra_segment(value: any) -> int:
     """
     Allocates and assigns a value into the Extra Memory segment. \n
     Returns its new address.
@@ -123,3 +123,4 @@ def assign_constant(value: any) -> int:
     memory[memory_address] = value
     counters[MemorySegments.EXTRA] += 1
     return memory_address
+

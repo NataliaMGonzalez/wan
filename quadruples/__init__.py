@@ -19,7 +19,6 @@ class Quadruples(Visitor_Recursive):
     quadruples = []
     addresses_stack = []
     jump_stack = []
-    temp_count = 1  # To be deleted after implementing memory
 
     def get_current_variables_table(self):
         table = globals.variables_table

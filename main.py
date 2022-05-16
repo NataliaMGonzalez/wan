@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 from memory_manager import memory
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/expressions-and-ifs.wan", 'r').read()
+code = open("examples/expressions-and-functions.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 # print("Parse Tree:")

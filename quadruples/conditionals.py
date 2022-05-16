@@ -5,7 +5,7 @@ def complete_quad(self):
     # complete last incomplete quad
     pointer = self.jump_stack.pop()
     incomplete_quad = list(self.quadruples[pointer])
-    incomplete_quad[2] = len(self.quadruples)
+    incomplete_quad[-1] = len(self.quadruples)
     complete_quad = tuple(incomplete_quad)
     self.quadruples[pointer] = complete_quad
 
@@ -24,7 +24,7 @@ def np_conditional_gotof(self, tree):
 
 def np_conditional_else(self, tree):
     complete_quad(self)    
-    quad = (InstructionPointerJump.GOTO, 'temp', '' )
+    quad = (InstructionPointerJump.GOTO, '' )
     self.quadruples.append(quad)
     add_to_jump_stack(self)   
     

@@ -1,3 +1,4 @@
+import globals
 from lark import Token
 from enums import Operators
 from memory_manager import assign_constant
@@ -8,7 +9,8 @@ def get_variable_address(self, variable):
     # TODO: Search for memory address of variable and append that address to the stack
     if isinstance(variable, Token):
         variable = variable.value
-        address = VariablesTable.variables_table[variable]
+        variables_table = self.get_current_variables_table()
+        address = variables_table[variable]
         return address
     if (variable.data == "self_attribute"):
         return "my:{}".format(variable.children[0].value)

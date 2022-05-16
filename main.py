@@ -16,6 +16,7 @@ tree = parseTree(grammar, code)
 variables_table = generate_variables_table(tree)
 print("\nVariables Table:")
 PrettyPrinter().pprint(variables_table)
+globals.variables_table = variables_table
 
 functions_directory = generate_functions_directory(tree)
 print("\nFunctions Directory:")

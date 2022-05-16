@@ -3,6 +3,7 @@ int a, b, c;
 
 # A character that can bend the elements.
 int test(int n) {
+  int a, b, c;
   if (n < 2) {
     a = 2 * 3;
     return 1;
@@ -22,3 +23,4 @@ int test(int n) {
 
 b = a * 10;
 c = 6;
+test(5);

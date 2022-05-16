@@ -1,16 +1,19 @@
+from collections import OrderedDict
+from typing import Union
 import globals
-from lark import Token
+from lark import Token, Tree
 from enums import Operators
 from addresses_manager import assign_into_extra_segment
 
 
-def get_variable_address(self, variable):
+def get_variable_address(self, variable: Union[Token, Tree]):
     # TODO: Search for memory address of variable and append that address to the stack
     if isinstance(variable, Token):
-        variable = variable.value
-        variables_table = self.get_current_variables_table()
-        address = variables_table[variable]
-        return address
+        variable_name: str = variable.value
+        vars_table: OrderedDict = self.get_current_variables_table()
+        if variable_name not in vars_table:
+            raise Exception("Variable has not been previously declared.")
+        return vars_table[variable_name]
     if (variable.data == "self_attribute"):
         return "my:{}".format(variable.children[0].value)
     if (variable.data == "instance_attribute"):

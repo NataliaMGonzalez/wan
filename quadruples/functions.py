@@ -1,16 +1,19 @@
+from collections import OrderedDict
 from lark import Tree
 from enums import FunctionOperators, Operators
 
 
 def function_eval(self, tree: Tree):
     id_token, *argument_tokens = tree.children
-    id = id_token.value
-    func_directory = self.get_current_functions_directory()
-    vars_table = self.get_current_variables_table(closed_scope=True)
-    vars_addresses = list(vars_table.values())
-    function_attributes = func_directory[id]
-    func_parameters = function_attributes["parameters"]
+    id: str = id_token.value
+    func_directory: OrderedDict = self.get_current_functions_directory()
+    vars_table: OrderedDict = self.get_current_variables_table(
+        closed_scope=True)
+    vars_addresses: list[int] = list(vars_table.values())
+    function_attributes: OrderedDict = func_directory[id]
 
+    # Check for argument - parameters mismatch
+    func_parameters = function_attributes["parameters"]
     if len(argument_tokens) != len(func_parameters):
         raise Exception(
             "The number of arguments does not match for function {}.".format(
@@ -42,9 +45,9 @@ def function_eval(self, tree: Tree):
 
 
 def return_statement(self, _tree: Tree):
-    func_directory = self.get_current_functions_directory()
-    return_address = func_directory[self.function_context]["returns"]
-    return_expression = self.addresses_stack.pop()
+    func_directory: OrderedDict = self.get_current_functions_directory()
+    return_address: int = func_directory[self.function_context]["returns"]
+    return_expression: int = self.addresses_stack.pop()
     assignment_quadruple = (
         Operators.ASSIGN, return_address, return_expression)
     self.quadruples.append(assignment_quadruple)

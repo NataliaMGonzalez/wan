@@ -21,8 +21,12 @@ class Firebender << Bender {
   bool can_lightbend;
 }
 
+int fibonacci_result;
+int fibonacci_to_do;
 class Mathematician {
-  int factorial(int num, bool test) {
+  int factorial(int num) {
+    fibonacci_result = 5;
+
     if (num == 0) {
       return 1;
     }
@@ -41,8 +45,6 @@ char name[30];
 # katara:waterFreeze();
 
 # Mathematician ko_jin;
-int fibonacci_result;
-int fibonacci_to_do;
 fibonacci_to_do = input();
 # fibonacci_result = ko_jin:fibonacci(5);
 print(fibonacci_result);

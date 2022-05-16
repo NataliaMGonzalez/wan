@@ -13,7 +13,7 @@ def generate_variables_table(tree):
 class VariablesTable(Visitor_Recursive):
     class_context = None
     function_context = None
-    variables_table = {}
+    variables_table = OrderedDict()
 
     def get_current_table(self):
         table = self.variables_table

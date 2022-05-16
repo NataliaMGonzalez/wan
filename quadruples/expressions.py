@@ -15,6 +15,11 @@ def get_variable_address(self, variable):
         return "my:{}".format(variable.children[0].value)
     if (variable.data == "instance_attribute"):
         return "instance_attribute"
+    if (variable.data == "function_eval"):
+        function_id = variable.children[0].value
+        functions_directory = self.get_current_functions_directory()
+        function_attributes = functions_directory[function_id]
+        return function_attributes["returns"]
 
 
 def add_expression_quadruple(self, operator):

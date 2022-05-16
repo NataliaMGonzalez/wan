@@ -39,3 +39,14 @@ def function_eval(self, tree: Tree):
         for address in vars_addresses[::-1]:
             retreival_quadruple = (FunctionOperators.PULL_FROM_STACK, address)
             self.quadruples.append(retreival_quadruple)
+
+
+def return_statement(self, _tree: Tree):
+    func_directory = self.get_current_functions_directory()
+    return_address = func_directory[self.function_context]["returns"]
+    return_expression = self.addresses_stack.pop()
+    assignment_quadruple = (
+        Operators.ASSIGN, return_address, return_expression)
+    self.quadruples.append(assignment_quadruple)
+    end_quadruple = (FunctionOperators.END_FUNC)
+    self.quadruples.append(end_quadruple)

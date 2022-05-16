@@ -112,7 +112,9 @@ function_body: function_statement*
     | conditional
     | function_call
     | comment
-    | _FUNCTION_RETURN expression _LINE_END
+    | return_statement
+
+return_statement: _FUNCTION_RETURN expression _LINE_END
 
 class_declaration: _CLASS_DECLARE class_id [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK
 

@@ -18,7 +18,7 @@ class Quadruples(Visitor_Recursive):
         np_conditional_gotof, np_conditional_else, conditional)
     from quadruples.cycles import np_cycle_start, np_cycle_gotof, np_cycle_end
     from quadruples.input_output import np_write, read
-    from quadruples.functions import function_eval
+    from quadruples.functions import function_eval, return_statement
 
     class_context = None
     function_context = None

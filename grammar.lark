@@ -163,6 +163,7 @@ var_exp: VAR_ID
     | self_attribute
     | instance_attribute
     | function_eval
+    | read
     | _OPEN_GROUP var_exp _CLOSE_GROUP
     | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
 

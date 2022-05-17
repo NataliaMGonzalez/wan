@@ -183,7 +183,11 @@ np_conditional_gotof:
 np_conditional_else:
 np_conditional_end:
 
-cycle: _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP _OPEN_BLOCK function_statement* _CLOSE_BLOCK
+cycle: np_cycle_start _CYCLE_START _OPEN_GROUP expression _CLOSE_GROUP np_cycle_gotof _OPEN_BLOCK  function_statement* _CLOSE_BLOCK np_cycle_end
+
+np_cycle_start:
+np_cycle_gotof:
+np_cycle_end:
 
 ?input_output: read | write 
 

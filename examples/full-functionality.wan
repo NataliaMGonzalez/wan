@@ -38,13 +38,14 @@ int strength, proficiency, intelligence;
 float power;
 char name[30];
 
-# Waterbender katara;
+Waterbender katara;
+Firebender zuko;
 # katara:max_hp = 100;
 # katara:hp = 100;
 # katara:water_power = 20;
 # katara:waterFreeze();
 
-# Mathematician ko_jin;
+Mathematician ko_jin;
 fibonacci_to_do = input();
 # fibonacci_result = ko_jin:fibonacci(5);
 # print(fibonacci_result);

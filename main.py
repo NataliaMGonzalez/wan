@@ -35,7 +35,7 @@ for address in globals.constants:
 # print("\nConstants:")
 # PrettyPrinter().pprint(globals.constants)
 
-raava.execute()
+# raava.execute()
 
 # print("\nFinal memory:")
 # PrettyPrinter().pprint(globals.memory)

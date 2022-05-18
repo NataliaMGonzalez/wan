@@ -118,9 +118,11 @@ function_body: function_statement*
 
 return_statement: _FUNCTION_RETURN expression _LINE_END
 
-class_declaration: _CLASS_DECLARE class_id [_INHERITANCE CLASS_ID] _OPEN_BLOCK class_body _CLOSE_BLOCK
+class_declaration: _CLASS_DECLARE class_id [class_inheritance] _OPEN_BLOCK class_body _CLOSE_BLOCK
 
 class_id: CLASS_ID
+
+class_inheritance: _INHERITANCE CLASS_ID
 
 class_body: (vars_declaration | function_declaration | comment)+
 

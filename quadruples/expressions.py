@@ -1,9 +1,8 @@
-from audioop import mul
 from enums import Operators
 from addresses_manager import assign_constant, assign_into_extra_segment
 
 
-def add_operation_quadruple(self, operator: Operators):
+def add_operation_quadruple(self, operator):
     right_operand = self.addresses_stack.pop()
     left_operand = self.addresses_stack.pop()
     address = assign_into_extra_segment()

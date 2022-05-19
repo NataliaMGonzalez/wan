@@ -3,7 +3,7 @@ from typing import Union
 from lark import Token, Tree
 from numpy import prod
 from addresses_manager import assign_constant, assign_into_extra_segment
-from enums import AssignmentOperators, Operators
+from enums import ArrayOperations, AssignmentOperators, Operators
 
 
 def var_exp(self, tree):
@@ -25,7 +25,7 @@ def get_variable_address(self, variable: Union[Token, Tree]) -> int:
     if (variable.data == "self_attribute"):
         return "my:{}".format(variable.children[0].value)
     if (variable.data == "instance_attribute"):
-        return "instance_attribute"
+        return get_instance_attribute(self, variable)
     if (variable.data == "function_eval"):
         return get_function_eval(self, variable)
     if (variable.data == "arr_exp_base"):
@@ -83,3 +83,27 @@ def get_arr_exp(self, tree: Tree) -> int:
 
     array_address = (base_address, total_sum_address)
     return array_address
+
+
+def get_instance_attribute(self, tree: Union[Token, Tree]):
+    """
+    When reading a class instance, get the address from its variables table.
+    `instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)`
+    """
+    _, var_or_function = tree.children
+
+    is_function: bool = isinstance(var_or_function, Tree)
+    if is_function:
+        raise Exception(
+            "Cannot assign variables to functions or return addresses of functions... yet 👀.")
+
+    # Due to the first section of the rule being var_exp, because it was a
+    # class, this will now be on the top of the addresses_stack
+    class_address = self.addresses_stack.pop()
+
+    var_name = var_or_function.value
+    instance_table = self.get_current_variables_table()[class_address]
+    if var_name not in instance_table:
+        raise Exception("This variable has not been defined.")
+
+    return instance_table[var_name]

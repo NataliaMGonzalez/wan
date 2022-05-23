@@ -22,18 +22,27 @@ class Quadruples(Visitor_Recursive):
     addresses_stack = []
     jump_stack = []
 
-    def get_current_variables_table(self):
+    def get_current_variables_table(self, closed_scope=False):
         table = globals.variables_table
         if self.class_context is not None:
-            table = table[self.class_context]
+            if closed_scope:
+                table = table[self.class_context]
+            else:
+                table = {**table, **table[self.class_context]}
         if self.function_context is not None:
-            table = table[self.function_context]
+            if closed_scope:
+                table = table[self.function_context]
+            else:
+                table = {**table, **table[self.function_context]}
         return table
 
-    def get_current_functions_directory(self):
+    def get_current_functions_directory(self, closed_scope=False):
         directory = globals.functions_directory
         if self.class_context is not None:
-            directory = directory[self.class_context]
+            if closed_scope:
+                directory = {**directory, **directory[self.class_context]}
+            else:
+                directory = directory[self.class_context]
         return directory
 
     def class_id(self, tree: Tree):

@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 from memory_manager import memory
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/expressions-ifs-while.wan", 'r').read()
+code = open("examples/read-write.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 # print("Parse Tree:")
@@ -28,5 +28,5 @@ print("\nQuadruples:")
 PrettyPrinter().pprint(quadruples)
 globals.quadruples = quadruples
 
-print("\nMemory:")
-PrettyPrinter().pprint(globals.memory)
+# print("\nMemory:")
+# PrettyPrinter().pprint(globals.memory)

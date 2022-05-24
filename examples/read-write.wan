@@ -1,0 +1,13 @@
+program test;
+int a, b, c;
+char x;
+
+
+b = a * 10;
+print(a + 8);
+c = 6;
+
+print(c , b);
+print(9 + 8 * 3, b, 'c');
+
+c = input();

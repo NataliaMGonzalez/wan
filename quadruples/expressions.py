@@ -26,6 +26,7 @@ def add_expression_quadruple(self, operator):
     self.quadruples.append(quad)
     self.addresses_stack.append(address)
 
+
 def or_expression(self, tree):
     add_expression_quadruple(self, Operators(tree.children[1].value))
 
@@ -57,6 +58,18 @@ def bool_constant(self, tree):
     # Exchange token with setting constant in memory and returning its address
     num_const = tree.children[0].value
     self.addresses_stack.append(num_const)
+
+
+def char_constant(self, tree):
+    char_value = tree.children[0].value
+    address = assign_into_extra_segment(char_value)
+    self.addresses_stack.append(address)
+
+
+def string_constant(self, tree):
+    string_value = tree.children[0].value
+    address = assign_into_extra_segment(string_value)
+    self.addresses_stack.append(address)
 
 
 def assignment_var(self, tree):

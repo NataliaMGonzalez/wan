@@ -144,9 +144,10 @@ expression: or_expression
 ?term: (term (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY))? factor
 
 ?factor: numerical_constant
-    | char_exp
-    | string_exp
+    | char_constant
+    | string_constant
     | bool_constant
+    | read
     | var_exp
     | _OPEN_GROUP expression _CLOSE_GROUP
 
@@ -154,11 +155,9 @@ numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 
 bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 
-char_exp: CHAR_VALUE
-    | var_exp
+char_constant: CHAR_VALUE
 
-string_exp: STRING_VALUE
-    | var_exp
+string_constant: STRING_VALUE 
 
 var_exp: VAR_ID
     | self_attribute
@@ -189,12 +188,12 @@ np_cycle_start:
 np_cycle_gotof:
 np_cycle_end:
 
-?input_output: read | write 
+?input_output: (read | write) _LINE_END
 
-read: _READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
+read: _READ_OPERATION _OPEN_GROUP _CLOSE_GROUP
 
-filename: STRING_VALUE
+write: _WRITE_OPERATION _OPEN_GROUP expression np_write ( _MULTIPLE expression np_write)* _CLOSE_GROUP
 
-write: _WRITE_OPERATION _OPEN_GROUP expression _CLOSE_GROUP _LINE_END
+np_write:
 
 comment: COMMENT

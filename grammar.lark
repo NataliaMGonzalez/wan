@@ -155,10 +155,8 @@ numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
 bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 
 char_exp: CHAR_VALUE
-    | var_exp
 
-string_exp: STRING_VALUE
-    | var_exp
+string_exp: STRING_VALUE 
 
 var_exp: VAR_ID
     | self_attribute
@@ -191,10 +189,10 @@ np_cycle_end:
 
 ?input_output: read | write 
 
-read: _READ_OPERATION _OPEN_GROUP filename _CLOSE_GROUP _LINE_END
+read: _READ_OPERATION _OPEN_GROUP _CLOSE_GROUP _LINE_END
 
-filename: STRING_VALUE
+write: _WRITE_OPERATION _OPEN_GROUP expression np_write ( _MULTIPLE expression np_write)* _CLOSE_GROUP _LINE_END
 
-write: _WRITE_OPERATION _OPEN_GROUP expression _CLOSE_GROUP _LINE_END
+np_write:
 
 comment: COMMENT

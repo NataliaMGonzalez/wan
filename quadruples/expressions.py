@@ -26,6 +26,7 @@ def add_expression_quadruple(self, operator):
     self.quadruples.append(quad)
     self.addresses_stack.append(address)
 
+
 def or_expression(self, tree):
     add_expression_quadruple(self, Operators(tree.children[1].value))
 
@@ -69,3 +70,13 @@ def var_exp(self, tree):
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)
     self.addresses_stack.append(var_address)
+
+
+def char_exp(self, tree):
+    char_value = tree.children[0].value
+    self.addresses_stack.append(char_value)
+
+
+def string_exp(self, tree):
+    string_value = tree.children[0].value
+    self.addresses_stack.append(string_value)

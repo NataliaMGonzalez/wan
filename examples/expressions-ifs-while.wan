@@ -16,3 +16,6 @@ int test(int n) {
 b = a * 10;
 c = 6;
 test(5);
+char name[10][5];
+char letter;
+# name[3][2] = c;

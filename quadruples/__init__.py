@@ -12,7 +12,7 @@ class Quadruples(Visitor_Recursive):
     from quadruples.expressions import (
         or_expression, and_expression, comp_expression, sum_expression, term,
         numerical_constant, bool_constant, char_constant, string_constant,
-        assignment_var, var_exp)
+        assignment_var, var_exp, arr_exp)
     from quadruples.assignments import assignment
     from quadruples.conditionals import (
         np_conditional_gotof, np_conditional_else, conditional)

@@ -165,7 +165,9 @@ var_exp: VAR_ID
     | function_eval
     | read
     | _OPEN_GROUP var_exp _CLOSE_GROUP
-    | var_exp (_ARRAY_START INT_VALUE _ARRAY_END)*
+    | arr_exp
+
+arr_exp: VAR_ID (_ARRAY_START expression _ARRAY_END)+
 
 self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
 

@@ -2,8 +2,9 @@ from collections import OrderedDict
 from typing import Union
 import globals
 from lark import Token, Tree
-from enums import Operators
+from enums import Operators, ArrayOperations
 from addresses_manager import assign_into_extra_segment
+from numpy import prod
 
 
 def get_variable_address(self, variable: Union[Token, Tree]):
@@ -88,7 +89,52 @@ def assignment_var(self, tree):
     self.addresses_stack.append(var_name)
 
 
+array_dim = []
+array_offsets = []
+
+
 def var_exp(self, tree):
+    if (isinstance(tree, Tree) and isinstance(tree.children[0], Tree) and tree.children[0].data == "arr_exp"):
+        return
+
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)
     self.addresses_stack.append(var_address)
+
+
+def arr_exp(self, tree: Tree):
+    variable, *expressions = tree.children
+
+    exp_addresses = []
+    for _ in expressions:
+        exp_address = self.addresses_stack.pop()
+        exp_addresses = [exp_address] + exp_addresses
+    base_address = get_variable_address(self, variable)
+
+    vars_table = self.get_current_variables_table()
+    size = vars_table[(variable.value, "size")]
+
+    # Calculate dimensions based on the array sizes
+    dims = []
+    for idx in range(len(size)):
+        dims.append(int(prod(size[idx+1:])))
+
+    total_sum_address = assign_into_extra_segment()
+    globals.constants[total_sum_address] = 0
+    for exp_address, dim in zip(exp_addresses, dims):
+        dim_address = assign_into_extra_segment()
+        globals.constants[dim_address] = dim
+        mult_address = assign_into_extra_segment()
+        quad_multiply = (Operators.MULTIPLY, exp_address,
+                         dim_address, mult_address)
+        self.quadruples.append(quad_multiply)
+        quad_sum = (Operators.ADD, mult_address,
+                    total_sum_address, total_sum_address)
+        self.quadruples.append(quad_sum)
+
+    result_address = assign_into_extra_segment()
+    pointer_quad = (ArrayOperations.POINT_TO, base_address,
+                    total_sum_address, result_address)
+    self.quadruples.append(pointer_quad)
+
+    self.addresses_stack.append(result_address)

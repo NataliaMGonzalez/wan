@@ -1,0 +1,9 @@
+program test;
+
+char a;
+int i;
+i = 2;
+
+char name[5][3];
+
+a = name[2 * i][1];

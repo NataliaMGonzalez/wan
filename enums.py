@@ -54,3 +54,7 @@ class FunctionOperators(Enum):
     END_FUNC = "ENDFunc"
     PUSH_IN_STACK = "PUSH_STACK"
     PULL_FROM_STACK = "PULL_FROM_STACK"
+
+
+class ArrayOperations(Enum):
+    POINT_TO = "point_to"

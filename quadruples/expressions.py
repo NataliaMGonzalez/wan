@@ -55,7 +55,7 @@ def numerical_constant(self, tree):
 
 def bool_constant(self, tree):
     bool_value = tree.children[0].value
-    address = self.addresses_stack.append(bool_value)
+    address = assign_into_extra_segment()
     globals.constants[address] = bool_value
     self.addresses_stack.append(address)
 

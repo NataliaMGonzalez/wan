@@ -12,3 +12,5 @@ functions_directory = {}
 memory = {}
 
 quadruples = {}
+
+constants = {}

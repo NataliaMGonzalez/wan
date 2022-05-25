@@ -30,3 +30,6 @@ globals.quadruples = quadruples
 
 # print("\nMemory:")
 # PrettyPrinter().pprint(globals.memory)
+
+print("\nConstants:")
+PrettyPrinter().pprint(globals.constants)

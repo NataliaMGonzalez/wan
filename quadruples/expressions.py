@@ -48,27 +48,30 @@ def term(self, tree):
 
 
 def numerical_constant(self, tree):
-    # Exchange token with setting constant in memory and returning its address
-    num_const = tree.children[1].value
-    address = assign_into_extra_segment(num_const)
+    num_value = tree.children[1].value
+    address = assign_into_extra_segment(num_value)
+    globals.constants[address] = num_value
     self.addresses_stack.append(address)
 
 
 def bool_constant(self, tree):
-    # Exchange token with setting constant in memory and returning its address
-    num_const = tree.children[0].value
-    self.addresses_stack.append(num_const)
+    bool_value = tree.children[0].value
+    address = self.addresses_stack.append(bool_value)
+    globals.constants[address] = bool_value
+    self.addresses_stack.append(address)
 
 
 def char_constant(self, tree):
     char_value = tree.children[0].value
     address = assign_into_extra_segment(char_value)
+    globals.constants[address] = char_value
     self.addresses_stack.append(address)
 
 
 def string_constant(self, tree):
     string_value = tree.children[0].value
     address = assign_into_extra_segment(string_value)
+    globals.constants[address] = string_value
     self.addresses_stack.append(address)
 
 

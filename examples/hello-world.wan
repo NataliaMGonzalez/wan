@@ -3,5 +3,11 @@ program test;
 print("Hello World");
 
 int a, b, c;
-b = input();
+b = 5;
 print(2 * 7 + 8 / (5 - 3) * b);
+
+bool d, e, f;
+d = true;
+e = false;
+f = e || d;
+print(f);

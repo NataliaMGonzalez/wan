@@ -1,9 +1,32 @@
+from typing import Tuple
 from enums import Operators
 import globals
 
 memory = globals.memory
 
-expression_operations = {
+
+def cast_to_bool(variable: str):
+    if variable == "true":
+        return True
+    else:
+        return False
+
+
+def and_operation(x: str, y: str):
+    """ Logical operation for AND. """
+    x = cast_to_bool(x)
+    y = cast_to_bool(y)
+    return x and y
+
+
+def or_operation(x: str, y: str):
+    """ Logical operation for OR. """
+    x = cast_to_bool(x)
+    y = cast_to_bool(y)
+    return x or y
+
+
+EXPRESSION_OPERATIONS = {
     Operators.ADD: lambda x, y: int(x) + int(y),
     Operators.MINUS: lambda x, y: int(x) - int(y),
     Operators.DIVIDE: lambda x, y: int(x) / int(y),
@@ -12,15 +35,18 @@ expression_operations = {
     Operators.REL_OP_GT: lambda x, y: int(x) > int(y),
     Operators.REL_OP_LT: lambda x, y: int(x) < int(y),
     Operators.REL_OP_NE: lambda x, y: int(x) != int(y),
-    Operators.LOG_OP_AND: lambda x, y: x and y,
-    Operators.LOG_OP_OR: lambda x, y: x or y,
+    Operators.LOG_OP_AND: and_operation,
+    Operators.LOG_OP_OR: or_operation,
 }
 
 
-def execute_expression(quadruple):
+def execute_expression(quadruple: Tuple[Operators, int, int, int]):
+    """
+    Executes the instruction that applies arithmetic or boolean operations.
+    """
     operator, address_01, address_02, new_address = quadruple
     value_01 = memory[address_01]
     value_02 = memory[address_02]
-    operation = expression_operations[operator]
+    operation = EXPRESSION_OPERATIONS[operator]
     result = operation(value_01, value_02)
     memory[new_address] = result

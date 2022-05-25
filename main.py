@@ -4,7 +4,7 @@ from pprint import PrettyPrinter
 from variables_table import generate_variables_table
 from functions_directory import generate_functions_directory
 from quadruples import generate_quadruples
-from raava import execute
+import raava
 
 grammar = open("grammar.lark", 'r').read()
 code = open("examples/hello-world.wan", 'r').read()
@@ -27,13 +27,20 @@ for address in globals.constants:
 
 # print("Parse Tree:")
 # print(tree.pretty())
+
 # print("\nVariables Table:")
 # PrettyPrinter().pprint(variables_table)
+
 # print("\nFunctions Directory:")
 # PrettyPrinter().pprint(functions_directory)
+
 # print("\nQuadruples:")
 # PrettyPrinter().pprint(quadruples)
+
 # print("\nConstants:")
 # PrettyPrinter().pprint(globals.constants)
 
-execute()
+raava.execute()
+
+# print("\nFinal memory:")
+# PrettyPrinter().pprint(globals.memory)

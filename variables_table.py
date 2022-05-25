@@ -1,7 +1,7 @@
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
 from numpy import prod
-from memory_manager import assign_to_memory
+from addresses_manager import assign_to_memory
 
 
 def generate_variables_table(tree):
@@ -38,7 +38,7 @@ class VariablesTable(Visitor_Recursive):
     def function_parameter(self, tree):
         var_type, var_name = tree.children
         var_type = DataTypes(var_type.value)
-        new_address = assign_to_memory(var_type, None)
+        new_address = assign_to_memory(var_type)
         table = self.get_current_table()
         table[var_name.value] = new_address
 
@@ -54,12 +54,13 @@ class VariablesTable(Visitor_Recursive):
             var_name = var_name.value
             if var_name in table:
                 raise TypeError(
-                    "Variable \"{}\" already declared in this scope.".format(var_name))
+                    "Variable \"{}\" already declared in this scope.".format(
+                        var_name))
             sizes = list(map(lambda s: int(s.value), array_sizes))
-            new_address = assign_to_memory(var_type, None)
+            new_address = assign_to_memory(var_type)
             table[var_name] = new_address
             total_size = int(prod(sizes))
             if len(sizes) > 0:
                 table[(var_name, "size")] = sizes
             for _ in range(1, total_size):
-                assign_to_memory(var_type, None)
+                assign_to_memory(var_type)

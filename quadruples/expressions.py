@@ -1,8 +1,7 @@
 import globals
 from lark import Token
 from enums import Operators
-from memory_manager import assign_into_extra_segment
-from variables_table import VariablesTable
+from addresses_manager import assign_into_extra_segment
 
 
 def get_variable_address(self, variable):
@@ -21,7 +20,7 @@ def get_variable_address(self, variable):
 def add_expression_quadruple(self, operator):
     right_operand = self.addresses_stack.pop()
     left_operand = self.addresses_stack.pop()
-    address = assign_into_extra_segment(None)
+    address = assign_into_extra_segment()
     quad = (operator, left_operand, right_operand, address)
     self.quadruples.append(quad)
     self.addresses_stack.append(address)
@@ -49,7 +48,7 @@ def term(self, tree):
 
 def numerical_constant(self, tree):
     num_value = tree.children[1].value
-    address = assign_into_extra_segment(num_value)
+    address = assign_into_extra_segment()
     globals.constants[address] = num_value
     self.addresses_stack.append(address)
 
@@ -63,14 +62,14 @@ def bool_constant(self, tree):
 
 def char_constant(self, tree):
     char_value = tree.children[0].value
-    address = assign_into_extra_segment(char_value)
+    address = assign_into_extra_segment()
     globals.constants[address] = char_value
     self.addresses_stack.append(address)
 
 
 def string_constant(self, tree):
     string_value = tree.children[0].value
-    address = assign_into_extra_segment(string_value)
+    address = assign_into_extra_segment()
     globals.constants[address] = string_value
     self.addresses_stack.append(address)
 

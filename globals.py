@@ -9,8 +9,6 @@ variables_table = {}
 
 functions_directory = {}
 
-memory = {}
-
 quadruples = {}
 
 constants = {}

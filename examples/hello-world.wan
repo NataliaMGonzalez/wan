@@ -1,0 +1,7 @@
+program test;
+
+print("Hello World");
+
+int a, b, c;
+b = input();
+print(2 * 7 + 8 / (5 - 3) * b);

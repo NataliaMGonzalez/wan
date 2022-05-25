@@ -4,6 +4,7 @@ import globals
 from lark import Token, Tree
 from enums import Operators
 from addresses_manager import assign_into_extra_segment
+from numpy import prod
 
 
 def get_variable_address(self, variable: Union[Token, Tree]):
@@ -92,3 +93,33 @@ def var_exp(self, tree):
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)
     self.addresses_stack.append(var_address)
+
+    variables_table = self.get_current_variables_table()
+    # si es un arreglo
+    if (variable, 'size') in variables_table:
+        array_dim = variables_table[(variable, 'size')]
+        print("array", variable, array_dim)
+        # DIM = 1
+        # PilaDim.push(id, DIM)
+        # pOper.push(Fake_bottom)
+        dimensions_offset = []
+        total_size = int(prod(array_dim))
+        m = total_size/array_dim[0]
+        dimensions_offset.append(m)
+
+        # calcular ms
+        for x in array_dim[1:]:
+            aux = m / 3
+            dimensions_offset.append(aux)
+            m = aux
+        print(dimensions_offset)
+
+        # for x in array_dim:
+        #     # cuadruplo de verificacion de rango
+        #     quad = ('VER', x)
+        #     self.quadruples.append(quad)
+        #     print(self.addresses_stack.pop())
+        #     if x == array_dim[-1]:
+        #         # suma
+        #         print("last dimension")
+        #     # self.addresses_stack.append(address)

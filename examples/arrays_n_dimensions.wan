@@ -1,0 +1,5 @@
+program test;
+
+char name[5][3];
+
+name[2][1];

@@ -16,8 +16,11 @@ class FunctionReturnTypes(Enum):
     ACTION = "action"
 
 
-class Operators(Enum):
+class AssignmentOperators(Enum):
     ASSIGN = "="
+
+
+class Operators(Enum):
     ADD = "+"
     MINUS = "-"
     MULTIPLY = "*"

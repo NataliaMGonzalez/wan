@@ -49,8 +49,8 @@ TYPE_FLOAT: "float"
 TYPE_CHAR: "char"
 TYPE_STRING: "string"
 
-BOOL_VALUE_TRUE: "true"
-BOOL_VALUE_FALSE: "false"
+BOOL_VALUE_TRUE: /true/
+BOOL_VALUE_FALSE: /false/
 
 INT_VALUE: /\d+/
 FLOAT_VALUE: /\d+(\.\d+)?/

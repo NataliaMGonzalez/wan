@@ -3,7 +3,7 @@ from typing import Union
 import globals
 from lark import Token, Tree
 from enums import Operators, ArrayOperations
-from addresses_manager import assign_into_extra_segment
+from addresses_manager import assign_constant, assign_into_extra_segment
 from numpy import prod
 
 
@@ -57,29 +57,25 @@ def term(self, tree):
 
 def numerical_constant(self, tree):
     num_value = tree.children[1].value
-    address = assign_into_extra_segment()
-    globals.constants[address] = num_value
+    address = assign_constant(num_value)
     self.addresses_stack.append(address)
 
 
 def bool_constant(self, tree):
     bool_value = tree.children[0].value
-    address = assign_into_extra_segment()
-    globals.constants[address] = bool_value
+    address = assign_constant(bool_value)
     self.addresses_stack.append(address)
 
 
 def char_constant(self, tree):
     char_value = tree.children[0].value
-    address = assign_into_extra_segment()
-    globals.constants[address] = char_value
+    address = assign_constant(char_value)
     self.addresses_stack.append(address)
 
 
 def string_constant(self, tree):
     string_value = tree.children[0].value
-    address = assign_into_extra_segment()
-    globals.constants[address] = string_value
+    address = assign_constant(string_value)
     self.addresses_stack.append(address)
 
 
@@ -119,11 +115,9 @@ def arr_exp(self, tree: Tree):
     for idx in range(len(size)):
         dims.append(int(prod(size[idx+1:])))
 
-    total_sum_address = assign_into_extra_segment()
-    globals.constants[total_sum_address] = 0
+    total_sum_address = assign_constant(0)
     for exp_address, dim in zip(exp_addresses, dims):
-        dim_address = assign_into_extra_segment()
-        globals.constants[dim_address] = dim
+        dim_address = assign_constant(dim)
         mult_address = assign_into_extra_segment()
         quad_multiply = (Operators.MULTIPLY, exp_address,
                          dim_address, mult_address)

@@ -69,7 +69,7 @@ def check_ds_memory_availability(var_type: DataTypes):
 
 def assign_to_memory(var_type: DataTypes) -> int:
     """
-    Based on the data type, place value in memory. \n
+    Based on the data type, allocates a space in data stack memory. \n
     Returns the resulting memory address.
     """
     check_ds_memory_availability(var_type)
@@ -111,7 +111,7 @@ def check_es_memory_availability():
 
 def assign_into_extra_segment() -> int:
     """
-    Allocates and assigns a value into the Extra Memory segment. \n
+    Allocates a space in the Extra Memory segment. \n
     Returns its new address.
     """
     check_es_memory_availability()

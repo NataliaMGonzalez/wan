@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import Union
 import globals
 from lark import Token, Tree
-from enums import Operators
+from enums import Operators, ArrayOperations
 from addresses_manager import assign_into_extra_segment
 from numpy import prod
 
@@ -89,37 +89,49 @@ def assignment_var(self, tree):
     self.addresses_stack.append(var_name)
 
 
+array_dim = []
+array_offsets = []
+
+
 def var_exp(self, tree):
+    if (isinstance(tree, Tree) and isinstance(tree.children[0], Tree) and tree.children[0].data == "arr_exp"):
+        return
+
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)
     self.addresses_stack.append(var_address)
 
-    variables_table = self.get_current_variables_table()
-    # si es un arreglo
-    if (variable, 'size') in variables_table:
-        array_dim = variables_table[(variable, 'size')]
-        print("array", variable, array_dim)
-        # DIM = 1
-        # PilaDim.push(id, DIM)
-        # pOper.push(Fake_bottom)
-        dimensions_offset = []
-        total_size = int(prod(array_dim))
-        m = total_size/array_dim[0]
-        dimensions_offset.append(m)
 
-        # calcular ms
-        for x in array_dim[1:]:
-            aux = m / 3
-            dimensions_offset.append(aux)
-            m = aux
-        print(dimensions_offset)
+def arr_exp(self, tree: Tree):
+    variable, *expressions = tree.children
 
-        # for x in array_dim:
-        #     # cuadruplo de verificacion de rango
-        #     quad = ('VER', x)
-        #     self.quadruples.append(quad)
-        #     print(self.addresses_stack.pop())
-        #     if x == array_dim[-1]:
-        #         # suma
-        #         print("last dimension")
-        #     # self.addresses_stack.append(address)
+    exp_addresses = []
+    for _ in expressions:
+        address = self.addresses_stack.pop()
+        exp_addresses = [address] + exp_addresses
+    base_address = get_variable_address(self, variable)
+
+    vars_table = self.get_current_variables_table()
+    size = vars_table[(variable.value, "size")]
+
+    dims = []
+    for idx in range(len(size)):
+        dims.append(prod(size[idx+1:]))
+
+    total_sum_address = assign_into_extra_segment()
+    for address, dim in zip(exp_addresses, dims):
+        dim_address = assign_into_extra_segment()
+        mult_address = assign_into_extra_segment()
+        quad_multiply = (Operators.MULTIPLY, address,
+                         dim_address, mult_address)
+        self.quadruples.append(quad_multiply)
+        quad_sum = (Operators.ADD, mult_address,
+                    total_sum_address, total_sum_address)
+        self.quadruples.append(quad_sum)
+
+    result_address = assign_into_extra_segment()
+    pointer_quad = (ArrayOperations.POINT_TO, base_address,
+                    total_sum_address, result_address)
+    self.quadruples.append(pointer_quad)
+
+    self.addresses_stack.append(result_address)

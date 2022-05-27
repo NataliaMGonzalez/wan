@@ -1,14 +1,22 @@
 import globals
+import raava.common
 from enums import AssignmentOperators, InputOutputInstructions, Operators
 from raava.expressions import execute_expression
 from raava.assignments import execute_assignment
 from raava.input_output import execute_input_output
 
 
-def execute(index=0):
-    """ Based on the type of quadruple, run the instructions. """
+def execute():
+    """ Run all the compiled quadruples of the program. """
     quadruples = globals.quadruples
-    quadruple = quadruples[index]
+    while raava.common.instruction_pointer < len(quadruples):
+        quadruple = quadruples[raava.common.instruction_pointer]
+        execute_quadruple(quadruple)
+        raava.common.instruction_pointer += 1
+
+
+def execute_quadruple(quadruple):
+    """ Based on the type of quadruple, run the instructions. """
     operator = quadruple[0]
 
     if isinstance(operator, InputOutputInstructions):
@@ -19,6 +27,3 @@ def execute(index=0):
 
     if isinstance(operator, Operators):
         execute_expression(quadruple)
-
-    if index < len(quadruples) - 1:
-        execute(index + 1)

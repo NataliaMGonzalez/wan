@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from typing import Union
-import globals
 from lark import Token, Tree
 from enums import Operators, ArrayOperations
 from addresses_manager import assign_constant, assign_into_extra_segment
@@ -15,6 +14,8 @@ def get_variable_address(self, variable: Union[Token, Tree]):
         if variable_name not in vars_table:
             raise Exception("Variable has not been previously declared.")
         return vars_table[variable_name]
+    if (variable.data == "arr_exp"):
+        return get_arr_exp(self, variable)
     if (variable.data == "self_attribute"):
         return "my:{}".format(variable.children[0].value)
     if (variable.data == "instance_attribute"):
@@ -90,15 +91,12 @@ array_offsets = []
 
 
 def var_exp(self, tree):
-    if (isinstance(tree, Tree) and isinstance(tree.children[0], Tree) and tree.children[0].data == "arr_exp"):
-        return
-
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)
     self.addresses_stack.append(var_address)
 
 
-def arr_exp(self, tree: Tree):
+def get_arr_exp(self, tree: Tree) -> int:
     variable, *expressions = tree.children
 
     exp_addresses = []
@@ -131,4 +129,4 @@ def arr_exp(self, tree: Tree):
                     total_sum_address, result_address)
     self.quadruples.append(pointer_quad)
 
-    self.addresses_stack.append(result_address)
+    return result_address

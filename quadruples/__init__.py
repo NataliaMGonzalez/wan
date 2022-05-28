@@ -11,14 +11,14 @@ def generate_quadruples(tree):
 class Quadruples(Visitor_Recursive):
     from quadruples.expressions import (
         or_expression, and_expression, comp_expression, sum_expression, term,
-        numerical_constant, bool_constant, char_constant, string_constant,
-        assignment_var, var_exp)
+        numerical_constant, bool_constant, char_constant, string_constant)
     from quadruples.assignments import assignment
     from quadruples.conditionals import (
         np_conditional_gotof, np_conditional_else, conditional)
     from quadruples.cycles import np_cycle_start, np_cycle_gotof, np_cycle_end
     from quadruples.input_output import np_write, read
     from quadruples.functions import function_eval, return_statement
+    from quadruples.var_exp import var_exp, assignment_var
 
     class_context = None
     function_context = None

@@ -7,6 +7,7 @@ from raava.assignments import execute_assignment
 from raava.functions import execute_function
 from raava.input_output import execute_input_output
 from raava.conditionals_cycles import execute_conditionals_cycles
+from raava.utils import execute_goto
 
 
 def execute():
@@ -36,3 +37,6 @@ def execute_quadruple(quadruple):
 
     if isinstance(operator, FunctionOperators):
         execute_function(quadruple)
+
+    if (operator == InstructionPointerJump.GOTO):
+        execute_goto(quadruple)

@@ -62,6 +62,6 @@ class VariablesTable(Visitor_Recursive):
             table[var_name] = new_address
             total_size = int(prod(sizes))
             if len(sizes) > 0:
-                table[(var_name, "size")] = sizes
+                table[(new_address, "size")] = sizes
             for _ in range(1, total_size):
                 assign_to_memory(var_type)

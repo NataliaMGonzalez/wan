@@ -25,11 +25,11 @@ memory = globals.memory
 for address in globals.constants:
     memory[address] = globals.constants[address]
 
-# print("Parse Tree:")
-# print(tree.pretty())
+print("Parse Tree:")
+print(tree.pretty())
 
-print("\nVariables Table:")
-PrettyPrinter().pprint(variables_table)
+# print("\nVariables Table:")
+# PrettyPrinter().pprint(variables_table)
 
 # print("\nFunctions Directory:")
 # PrettyPrinter().pprint(functions_directory)

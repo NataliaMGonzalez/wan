@@ -37,6 +37,8 @@ def get_variable_address(self, variable: Union[Token, Tree]):
         functions_directory = self.get_current_functions_directory()
         function_attributes = functions_directory[function_id]
         return function_attributes["returns"]
+    if (variable.data == "var_exp"):
+        return get_variable_address(self, variable.children[0])
 
 
 def get_arr_exp(self, tree: Tree) -> int:
@@ -50,7 +52,7 @@ def get_arr_exp(self, tree: Tree) -> int:
     base_address = get_variable_address(self, variable)
 
     vars_table = self.get_current_variables_table()
-    size = vars_table[(variable.value, "size")]
+    size = vars_table[(base_address, "size")]
 
     # Calculate dimensions based on the array sizes
     dims = []

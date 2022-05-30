@@ -25,9 +25,9 @@ def np_conditional_gotof(self, tree):
 
 
 def np_conditional_else(self, tree):
-    complete_quad(self)
     quad = (InstructionPointerJump.GOTO, '')
     self.quadruples.append(quad)
+    complete_quad(self)
     add_current_to_jump_stack(self)
 
 

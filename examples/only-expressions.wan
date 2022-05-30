@@ -1,4 +1,11 @@
 program test;
 
 int a, b, c;
-a = 1 + (b * (3 / 4 + c)) > 6;
+# TODO: verificar error al intentar hacer aritmetica con variables no inicializadas
+# TODO: verificar tipos
+b = 4;
+c = 2;
+a = 1 + (b * (3 / 4 + c));
+# a = 1 + (b * (3 / 4 + c)) > 6;
+
+print(a);

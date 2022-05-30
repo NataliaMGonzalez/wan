@@ -1,21 +1,33 @@
 program test;
 int a, b, c;
-
-# A character that can bend the elements.
-int test(int n) {
-  if (n > 20){
-    n = 3 * 2;
-    while(n < 10){
-    n = n + 1;
-    }
-  }
-  return 0;
-}
-
-
+a = 10;
 b = a * 10;
 c = 6;
-test(5);
-char name[10][5];
-char letter;
-# name[3][2] = c;
+
+# A character that can bend the elements.
+
+if (a > 20){
+  print("dentro del if");
+} else {
+  b = 3 * 2;
+  print("else");
+}
+print("fin if");
+
+while( a + 2 > 0){
+  a = a - 1;
+  print("while grande");
+  print(a);
+  if (b == 6){
+    while(b > 0){
+    b = b-1;
+    print("while chico");
+  }
+  }
+
+}
+
+print("1");
+print(b);
+print(c);
+

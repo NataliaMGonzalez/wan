@@ -35,7 +35,7 @@ print(tree.pretty())
 # PrettyPrinter().pprint(functions_directory)
 
 print("\nQuadruples:")
-PrettyPrinter().pprint(quadruples)
+PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
 print("\nConstants:")
 PrettyPrinter().pprint(globals.constants)

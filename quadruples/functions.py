@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from lark import Tree
-from enums import AssignmentOperators, FunctionOperators, Operators
+from enums import AssignmentOperators, FunctionOperators
 
 
 def function_eval(self, tree: Tree):
@@ -48,9 +48,6 @@ def return_statement(self, _tree: Tree):
     func_directory: OrderedDict = self.get_current_functions_directory()
     return_address: int = func_directory[self.function_context]["returns"]
     return_expression: int = self.addresses_stack.pop()
-    assignment_quadruple = (
-        AssignmentOperators.ASSIGN, return_address, return_expression,
-        return_address)
-    self.quadruples.append(assignment_quadruple)
-    end_quadruple = (FunctionOperators.END_FUNC)
+    end_quadruple = (FunctionOperators.RETURN,
+                     return_address, return_expression)
     self.quadruples.append(end_quadruple)

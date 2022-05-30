@@ -54,7 +54,7 @@ class InputOutputInstructions(Enum):
 class FunctionOperators(Enum):
     GOSUB = "GOSUB"
     ERA = "ERA"
-    END_FUNC = "ENDFunc"
+    RETURN = "RETURN"
     PUSH_IN_STACK = "PUSH_STACK"
     PULL_FROM_STACK = "PULL_FROM_STACK"
 

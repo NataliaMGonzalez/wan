@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from pyclbr import Function
 from lark import Tree
 from enums import AssignmentOperators, FunctionOperators
 
@@ -29,7 +30,7 @@ def function_eval(self, tree: Tree):
     for parameter in func_parameters:
         argument_address = self.addresses_stack.pop()
         assignment_quadruple = (
-            AssignmentOperators.ASSIGN, parameter, argument_address, parameter)
+            FunctionOperators.SAVE_PARAM, parameter, argument_address)
         self.quadruples.append(assignment_quadruple)
 
     # Go into function

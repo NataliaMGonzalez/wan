@@ -15,8 +15,8 @@ def execute_function(quadruple):
         raava.common.instruction_pointer = function_position - 1
 
     if (operator == FunctionOperators.RETURN):
-        _, return_address, expression = quadruple
-        memory[return_address] = memory[expression]
+        _, return_address, expression_address = quadruple
+        memory[return_address] = memory[expression_address]
         return_instruction = raava.common.return_to_instruction
         raava.common.instruction_pointer = return_instruction - 1
 
@@ -27,3 +27,7 @@ def execute_function(quadruple):
     if (operator == FunctionOperators.PULL_FROM_STACK):
         address = quadruple[1]
         memory[address] = raava.common.function_stack.pop()
+
+    if (operator == FunctionOperators.SAVE_PARAM):
+        _, param_address, expression_address = quadruple
+        memory[param_address] = memory[expression_address]

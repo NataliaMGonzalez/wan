@@ -57,6 +57,7 @@ class FunctionOperators(Enum):
     RETURN = "RETURN"
     PUSH_IN_STACK = "PUSH_STACK"
     PULL_FROM_STACK = "PULL_FROM_STACK"
+    SAVE_PARAM = "SAVE_PARAM"
 
 
 class ArrayOperations(Enum):

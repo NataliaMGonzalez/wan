@@ -1,6 +1,8 @@
+import globals
 from lark import Tree
 from lark.visitors import Visitor_Recursive
-import globals
+from quadruples.declaration_jump import (
+    create_declaration_jump, restore_declaration_jump)
 
 
 def generate_quadruples(tree):
@@ -26,6 +28,8 @@ class Quadruples(Visitor_Recursive):
     addresses_stack = []
     jump_stack = []
 
+    declaration_jump = None
+
     def get_current_variables_table(self, closed_scope=False):
         table = globals.variables_table
         if self.class_context is not None:
@@ -50,17 +54,23 @@ class Quadruples(Visitor_Recursive):
         return directory
 
     def class_id(self, tree: Tree):
+        self.declaration_jump = create_declaration_jump(self)
         class_id = tree.children[0].value
         self.class_context = class_id
 
     def class_declaration(self, _tree: Tree):
+        restore_declaration_jump(self)
         self.class_context = None
 
     def function_id(self, tree: Tree):
+        # Declare jump to not execute on first load
+        if self.declaration_jump is None:
+            self.declaration_jump = create_declaration_jump(self)
         function_id: str = tree.children[0].value
         directory = self.get_current_functions_directory()
         directory[function_id]["position"] = len(self.quadruples)
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):
+        restore_declaration_jump(self)
         self.function_context = None

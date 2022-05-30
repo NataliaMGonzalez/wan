@@ -73,7 +73,7 @@ program: program_declaration global_statement+
 
 program_declaration: _PROGRAM VAR_ID _LINE_END
 
-?global_statement: declaration
+global_statement: declaration
     | assignment
     | input_output
     | cycle

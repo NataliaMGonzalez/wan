@@ -4,12 +4,11 @@ int a, b, c;
 
 # A character that can bend the elements.
 int factorial(int n) {
-  bool is_last;
-  is_last = n - 1;
-  if (is_last) {
-    return 2;
+  if (n < 2) {
+    return 1;
   }
-  return n * factorial(n - 3);
+  print(n);
+  return n * factorial(n - 1);
 }
 
 a = factorial(4);

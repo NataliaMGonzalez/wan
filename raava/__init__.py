@@ -1,8 +1,10 @@
 import globals
 import raava.common
-from enums import AssignmentOperators, InputOutputInstructions, InstructionPointerJump, Operators
+from enums import (AssignmentOperators, InputOutputInstructions,
+                   InstructionPointerJump, Operators, FunctionOperators)
 from raava.expressions import execute_expression
 from raava.assignments import execute_assignment
+from raava.functions import execute_function
 from raava.input_output import execute_input_output
 from raava.conditionals_cycles import execute_conditionals_cycles
 
@@ -31,3 +33,6 @@ def execute_quadruple(quadruple):
 
     if isinstance(operator, InstructionPointerJump):
         execute_conditionals_cycles(quadruple)
+
+    if isinstance(operator, FunctionOperators):
+        execute_function(quadruple)

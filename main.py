@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 import raava
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/expressions-ifs-while.wan", 'r').read()
+code = open("examples/expressions-and-functions.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 
@@ -25,8 +25,8 @@ memory = globals.memory
 for address in globals.constants:
     memory[address] = globals.constants[address]
 
-print("Parse Tree:")
-print(tree.pretty())
+# print("Parse Tree:")
+# print(tree.pretty())
 
 # print("\nVariables Table:")
 # PrettyPrinter().pprint(variables_table)
@@ -37,8 +37,8 @@ print(tree.pretty())
 print("\nQuadruples:")
 PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
-print("\nConstants:")
-PrettyPrinter().pprint(globals.constants)
+# print("\nConstants:")
+# PrettyPrinter().pprint(globals.constants)
 
 raava.execute()
 

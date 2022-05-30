@@ -29,7 +29,7 @@ def function_eval(self, tree: Tree):
     for parameter in func_parameters:
         argument_address = self.addresses_stack.pop()
         assignment_quadruple = (
-            AssignmentOperators.ASSIGN, parameter, argument_address)
+            AssignmentOperators.ASSIGN, parameter, argument_address, parameter)
         self.quadruples.append(assignment_quadruple)
 
     # Go into function
@@ -49,7 +49,8 @@ def return_statement(self, _tree: Tree):
     return_address: int = func_directory[self.function_context]["returns"]
     return_expression: int = self.addresses_stack.pop()
     assignment_quadruple = (
-        AssignmentOperators.ASSIGN, return_address, return_expression)
+        AssignmentOperators.ASSIGN, return_address, return_expression,
+        return_address)
     self.quadruples.append(assignment_quadruple)
     end_quadruple = (FunctionOperators.END_FUNC)
     self.quadruples.append(end_quadruple)

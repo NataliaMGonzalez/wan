@@ -124,7 +124,7 @@ class_body: (vars_declaration | function_declaration | comment)+
 
 assignment: assignment_var ASSIGNMENT (read | expression) _LINE_END
 
-assignment_var: VAR_ID | instance_attribute | self_attribute
+assignment_var: var_exp
 
 expression: or_expression
 

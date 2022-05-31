@@ -1,3 +1,4 @@
+from enums import FunctionOperators
 import globals
 from lark import Tree
 from lark.visitors import Visitor_Recursive
@@ -72,5 +73,7 @@ class Quadruples(Visitor_Recursive):
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):
+        end_quadruple = (FunctionOperators.RETURN,)
+        self.quadruples.append(end_quadruple)
         restore_declaration_jump(self)
         self.function_context = None

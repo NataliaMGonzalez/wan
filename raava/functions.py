@@ -10,24 +10,31 @@ def execute_function(quadruple):
 
     if (operator == FunctionOperators.GOSUB):
         current_instruction = raava.common.instruction_pointer
-        raava.common.return_to_instruction = current_instruction
-        function_position = quadruple[1]
-        raava.common.instruction_pointer = function_position - 1
+        raava.common.instructions_stack.append(current_instruction)
+        new_instruction = quadruple[1]
+        raava.common.instruction_pointer = new_instruction - 1
 
     if (operator == FunctionOperators.RETURN):
-        _, return_address, expression_address = quadruple
-        memory[return_address] = memory[expression_address]
-        return_instruction = raava.common.return_to_instruction
-        raava.common.instruction_pointer = return_instruction - 1
+        execute_return(quadruple)
 
     if (operator == FunctionOperators.PUSH_IN_STACK):
         address = quadruple[1]
-        raava.common.function_stack.append(address)
+        saved_value = memory[address]
+        raava.common.function_stack.append(saved_value)
 
     if (operator == FunctionOperators.PULL_FROM_STACK):
         address = quadruple[1]
-        memory[address] = raava.common.function_stack.pop()
+        saved_value = raava.common.function_stack.pop()
+        memory[address] = saved_value
 
     if (operator == FunctionOperators.SAVE_PARAM):
         _, param_address, expression_address = quadruple
         memory[param_address] = memory[expression_address]
+
+
+def execute_return(quadruple):
+    if len(quadruple) > 1:
+        _, return_address, expression_address = quadruple
+        memory[return_address] = memory[expression_address]
+    return_instruction = raava.common.instructions_stack.pop()
+    raava.common.instruction_pointer = return_instruction

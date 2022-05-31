@@ -28,8 +28,8 @@ for address in globals.constants:
 # print("Parse Tree:")
 # print(tree.pretty())
 
-print("\nVariables Table:")
-PrettyPrinter().pprint(variables_table)
+# print("\nVariables Table:")
+# PrettyPrinter().pprint(variables_table)
 
 # print("\nFunctions Directory:")
 # PrettyPrinter().pprint(functions_directory)
@@ -37,8 +37,8 @@ PrettyPrinter().pprint(variables_table)
 print("\nQuadruples:")
 PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
-print("\nConstants:")
-PrettyPrinter().pprint(globals.constants)
+# print("\nConstants:")
+# PrettyPrinter().pprint(globals.constants)
 
 raava.execute()
 

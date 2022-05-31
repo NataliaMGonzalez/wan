@@ -2,22 +2,11 @@ program test;
 
 int a, b, c;
 
-# Let's try testing.
-int functionOne(int a, int b) {
-  b = a + c;
-  print(b);
+int factorial(int n) {
+  if (n < 2) { return 1; }
+  return n * factorial(n - 1);
 }
 
-# If the functions are not affected.
-int functionTwo(int n) {
-  int d;
-  d = 4;
-  functionOne(n, d);
-  return 9;
-}
-
-c = 6;
-a = functionTwo(20);
-b = a * 5;
+a = factorial(6);
 
 print(a);

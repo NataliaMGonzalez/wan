@@ -6,12 +6,6 @@ from addresses_manager import assign_constant, assign_into_extra_segment
 from enums import ArrayOperations, Operators
 
 
-def assignment_var(self, tree):
-    variable = tree.children[0]
-    var_name = get_variable_address(self, variable)
-    self.addresses_stack.append(var_name)
-
-
 def var_exp(self, tree):
     variable = tree.children[0]
     var_address = get_variable_address(self, variable)

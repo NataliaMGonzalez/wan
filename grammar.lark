@@ -122,9 +122,7 @@ class_id: CLASS_ID
 
 class_body: (vars_declaration | function_declaration | comment)+
 
-assignment: assignment_var ASSIGNMENT (read | expression) _LINE_END
-
-assignment_var: var_exp
+assignment: var_exp ASSIGNMENT (read | expression) _LINE_END
 
 expression: or_expression
 

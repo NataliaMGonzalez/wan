@@ -134,7 +134,7 @@ def assign_constant(value: Union[bool, int, str]) -> int:
     if isinstance(value, str):
         if re.search(r"\b(true|false)\b", value) is not None:
             value = str_to_bool(value)
-        elif re.search(r"^[0-9]*$", value) is not None:
+        elif re.search(r"^[0-9]+$", value) is not None:
             value = int(value)
     constants = globals.constants
     constants[memory_address] = value

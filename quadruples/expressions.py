@@ -1,3 +1,4 @@
+from audioop import mul
 from enums import Operators
 from addresses_manager import assign_constant, assign_into_extra_segment
 
@@ -37,8 +38,10 @@ def term(self, tree):
 
 
 def numerical_constant(self, tree):
-    num_value = tree.children[1].value
-    address = assign_constant(num_value)
+    is_negative, num = tree.children
+    num_value = int(num.value)
+    multiplier = -1 if is_negative else 1
+    address = assign_constant(num_value * multiplier)
     self.addresses_stack.append(address)
 
 

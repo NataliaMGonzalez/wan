@@ -1,0 +1,29 @@
+program test;
+
+int a, b, c;
+
+int factorialRecursive(int n) {
+  if (n < 2) { return 1; }
+  return n * factorialRecursive(n - 1);
+}
+
+int factorialIterative(int n) {
+  int fact;
+  fact = 1;
+  int i;
+  i = 1;
+
+  while(i <= n){
+    fact = fact * i;
+    i = i + 1;
+  }
+
+  return fact;
+}
+
+a = factorialRecursive(6);
+print("factorial recursive: ", a);
+
+b = factorialIterative(5);
+print("factorial iterative: ", b);
+

@@ -34,6 +34,8 @@ REL_OP_LT: "<"
 REL_OP_GT: ">"
 REL_OP_NE: "<>"
 REL_OP_EQ: "=="
+REL_OP_LE: "<="
+REL_OP_GE: ">="
 
 ASSIGNMENT: "="
 ARIT_OPS_SUM: "+"
@@ -136,6 +138,8 @@ expression: or_expression
     | REL_OP_GT
     | REL_OP_NE
     | REL_OP_EQ
+    | REL_OP_LE
+    | REL_OP_GE
 
 ?sum_expression: (sum_expression (ARIT_OPS_SUBTRACT | ARIT_OPS_SUM))? term
 

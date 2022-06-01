@@ -1,3 +1,4 @@
+from re import A
 import globals
 import raava.common
 from enums import FunctionOperators, InstructionPointerJump
@@ -19,7 +20,9 @@ def execute_function(quadruple):
 
     if (operator == FunctionOperators.PUSH_IN_STACK):
         address = quadruple[1]
-        saved_value = memory[address]
+        saved_value = None
+        if(address in memory):
+            saved_value = memory[address]
         raava.common.function_stack.append(saved_value)
 
     if (operator == FunctionOperators.PULL_FROM_STACK):

@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 import raava
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/expressions-and-functions.wan", 'r').read()
+code = open("examples/arrays-n-dimensions.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 
@@ -28,8 +28,8 @@ for address in globals.constants:
 # print("Parse Tree:")
 # print(tree.pretty())
 
-# print("\nVariables Table:")
-# PrettyPrinter().pprint(variables_table)
+print("\nVariables Table:")
+PrettyPrinter().pprint(variables_table)
 
 # print("\nFunctions Directory:")
 # PrettyPrinter().pprint(functions_directory)
@@ -42,5 +42,5 @@ PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
 raava.execute()
 
-# print("\nFinal memory:")
-# PrettyPrinter().pprint(globals.memory)
+print("\nFinal memory:")
+PrettyPrinter().pprint(globals.memory)

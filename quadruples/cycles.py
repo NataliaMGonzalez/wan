@@ -19,13 +19,11 @@ def np_cycle_gotof(self, tree):
 
 
 def np_cycle_end(self, tree):
-    print(self.jump_stack)
     # complet gotoF quadruple
     while_gotof = self.jump_stack.pop()
     incomplete_quad = list(self.quadruples[while_gotof])
     incomplete_quad[-1] = len(self.quadruples) + 1
     complete_quad = tuple(incomplete_quad)
-    print(complete_quad)
     self.quadruples[while_gotof] = complete_quad
 
     # return to while start

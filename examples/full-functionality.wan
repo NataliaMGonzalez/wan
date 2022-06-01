@@ -47,4 +47,4 @@ char name[30];
 # Mathematician ko_jin;
 fibonacci_to_do = input();
 # fibonacci_result = ko_jin:fibonacci(5);
-print(fibonacci_result);
+# print(fibonacci_result);

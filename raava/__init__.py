@@ -12,6 +12,9 @@ import globals
 import raava.common
 
 
+memory = globals.memory
+
+
 def execute():
     """ Run all the compiled quadruples of the program. """
     quadruples = globals.quadruples
@@ -24,6 +27,8 @@ def execute():
 def execute_quadruple(quadruple):
     """ Based on the type of quadruple, run the instructions. """
     operator = quadruple[0]
+
+    quadruple = format_quadruple(quadruple)
 
     if isinstance(operator, InputOutputInstructions):
         execute_input_output(quadruple)
@@ -42,5 +47,16 @@ def execute_quadruple(quadruple):
 
     if (operator == InstructionPointerJump.GOTO):
         execute_goto(quadruple)
-    if isinstance(operator, ArrayOperations):
-        execute_array(quadruple)
+
+
+def format_quadruple(quadruple):
+    """ Solves arrays by correcting the array tuples into their final address."""
+    formatted_quadruple = []
+    for element in quadruple:
+        to_add = element
+        if isinstance(element, tuple):
+            base_address, expression = element
+            offset = memory[expression]
+            to_add = base_address + offset
+        formatted_quadruple.append(to_add)
+    return tuple(formatted_quadruple)

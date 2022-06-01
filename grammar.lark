@@ -165,7 +165,12 @@ var_exp: VAR_ID
     | _OPEN_GROUP var_exp _CLOSE_GROUP
     | arr_exp
 
-arr_exp: var_exp (_ARRAY_START expression _ARRAY_END)+
+arr_exp: arr_exp_base (_ARRAY_START expression _ARRAY_END)+
+
+?arr_exp_base: VAR_ID
+    | self_attribute
+    | instance_attribute
+    | function_eval
 
 self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
 

@@ -1,0 +1,82 @@
+program matrix_multiplication;
+
+int a[10][10], b[10][10], mult[10][10], row_a, col_a, row_b, col_b, i, j, k;
+
+print("Enter rows and columns for first matrix: ");
+row_a = input();
+col_a = input();
+print("Enter rows and columns for second matrix: ");
+row_b = input();
+col_b = input();
+
+# If column of first matrix in not equal to row of second matrix,
+# ask the user to enter the size of matrix again.
+if (col_a <> row_b)
+{
+  print("Error");
+}
+
+# Storing elements of first matrix.
+i = 0;
+while (i < row_a) {
+  j = 0;
+  while (j < col_a) {
+    print("Enter value for matrix a:");
+    print(i);
+    print(j);
+    a[i][j] = input();
+    j = j + 1;
+  }
+  i = i + 1;
+}
+
+# Storing elements of second matrix.
+i = 0;
+while (i < row_a) {
+  j = 0;
+  while (j < col_a) {
+    print("Enter value for matrix b:");
+    print(i);
+    print(j);
+    b[i][j] = input();
+    j = j + 1;
+  }
+  i = i + 1;
+}
+
+# Initializing elements of matrix mult to 0.
+i = 0;
+while (i < row_a) {
+  j = 0;
+  while (j < col_b) {
+    mult[i][j] = 0;
+    j = j + 1;
+  }
+  i = i + 1;
+}
+
+# Multiplying matrix a and b and storing in array mult.
+i = 0;
+while (i < row_a) {
+  j = 0;
+  while (j < col_b) {
+    k = 0;
+    while (k < col_a) {
+      mult[i][j] = mult[i][j] + a[i][k] * b[k][j];
+      k = k + 1;
+    }
+    j = j + 1;
+  }
+  i = i + 1;
+}
+
+# Displaying the multiplication of two matrix.
+i = 0;
+while (i < row_b) {
+  j = 0;
+  while (j < col_b) {
+    print(mult[i][j]);
+    j = j + 1;
+  }
+  i = i + 1;
+}

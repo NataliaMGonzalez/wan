@@ -3,7 +3,7 @@ from typing import Union
 from lark import Token, Tree
 from numpy import prod
 from addresses_manager import assign_constant, assign_into_extra_segment
-from enums import ArrayOperations, Operators
+from enums import AssignmentOperators, Operators
 
 
 def var_exp(self, tree):
@@ -12,7 +12,7 @@ def var_exp(self, tree):
     self.addresses_stack.append(var_address)
 
 
-def get_variable_address(self, variable: Union[Token, Tree]):
+def get_variable_address(self, variable: Union[Token, Tree]) -> int:
     """ Based on a variable token or tree, get the variable address. """
     if isinstance(variable, Token):
         variable_name: str = variable.value
@@ -31,6 +31,8 @@ def get_variable_address(self, variable: Union[Token, Tree]):
         functions_directory = self.get_current_functions_directory()
         function_attributes = functions_directory[function_id]
         return function_attributes["returns"]
+    if (variable.data == "arr_exp_base"):
+        return get_variable_address(self, variable.children[0])
     if (variable.data == "var_exp"):
         return get_variable_address(self, variable.children[0])
 
@@ -53,7 +55,11 @@ def get_arr_exp(self, tree: Tree) -> int:
     for idx in range(len(size)):
         dims.append(int(prod(size[idx+1:])))
 
-    total_sum_address = assign_constant(0)
+    total_sum_address = assign_into_extra_segment()
+    zero = assign_constant(0)
+    reset_quadruple = (AssignmentOperators.ASSIGN, total_sum_address,
+                       zero, total_sum_address)
+    self.quadruples.append(reset_quadruple)
     for exp_address, dim in zip(exp_addresses, dims):
         dim_address = assign_constant(dim)
         mult_address = assign_into_extra_segment()
@@ -64,9 +70,5 @@ def get_arr_exp(self, tree: Tree) -> int:
                     total_sum_address, total_sum_address)
         self.quadruples.append(quad_sum)
 
-    result_address = assign_into_extra_segment()
-    pointer_quad = (ArrayOperations.POINT_TO, base_address,
-                    total_sum_address, result_address)
-    self.quadruples.append(pointer_quad)
-
-    return result_address
+    array_address = (base_address, total_sum_address)
+    return array_address

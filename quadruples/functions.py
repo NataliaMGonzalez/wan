@@ -1,7 +1,6 @@
 from collections import OrderedDict
-from pyclbr import Function
 from lark import Tree
-from enums import AssignmentOperators, FunctionOperators
+from enums import FunctionOperators
 
 
 def function_eval(self, tree: Tree):

@@ -178,7 +178,7 @@ arr_exp: arr_exp_base (_ARRAY_START expression _ARRAY_END)+
     | instance_attribute
     | function_eval
 
-self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
+self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE (VAR_ID | class_function)
 
 instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | class_function)
 

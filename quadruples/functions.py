@@ -6,10 +6,17 @@ from enums import FunctionOperators
 def function_eval(self, tree: Tree):
     id_token, *argument_tokens = tree.children
     id: str = id_token.value
-    func_directory: OrderedDict = self.get_current_functions_directory()
     vars_table: OrderedDict = self.get_current_variables_table(
         closed_scope=True)
     vars_addresses: list[int] = list(vars_table.values())
+
+    func_directory: OrderedDict = self.get_current_functions_directory()
+    function_attributes = None
+    if len(self.classes_stack) > 0:
+        current_class = self.classes_stack[-1]
+        class_type = vars_table[(current_class, "type")]
+        func_directory = func_directory[class_type]
+
     function_attributes: OrderedDict = func_directory[id]
 
     # Check for argument - parameters mismatch

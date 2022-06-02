@@ -1,3 +1,4 @@
+import globals
 from collections import OrderedDict
 from typing import Union
 from lark import Token, Tree
@@ -92,17 +93,22 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
     """
     _, var_or_function = tree.children
 
-    is_function: bool = isinstance(var_or_function, Tree)
-    if is_function:
-        raise Exception(
-            "Cannot assign variables to functions or return addresses of functions... yet 👀.")
-
     # Due to the first section of the rule being var_exp, because it was a
     # class, this will now be on the top of the addresses_stack
     class_address = self.addresses_stack.pop()
 
+    vars_table = self.get_current_variables_table()
+
+    # In case the second parameter is a function, return that function's address.
+    is_function: bool = isinstance(var_or_function, Tree)
+    if is_function:
+        function_name = var_or_function.children[1].children[0].value
+        class_type = vars_table[(class_address, "type")]
+        return globals.functions_directory[class_type][function_name][
+            "returns"]
+
     var_name = var_or_function.value
-    instance_table = self.get_current_variables_table()[class_address]
+    instance_table = vars_table[class_address]
     if var_name not in instance_table:
         raise Exception("This variable has not been defined.")
 
@@ -118,6 +124,7 @@ def np_set_class_function(self, _tree: Tree):
     current_class = self.addresses_stack[-1]
     quadruple = (ClassOperations.SET_FUNCTION_CLASS, current_class)
     self.quadruples.append(quadruple)
+    self.classes_stack.append(current_class)
 
 
 def np_clear_class_function(self, _tree: Tree):

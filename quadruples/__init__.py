@@ -30,6 +30,9 @@ class Quadruples(Visitor_Recursive):
     addresses_stack = []
     jump_stack = []
 
+    # Used when calling class instance functions
+    classes_stack = []
+
     declaration_jump = None
 
     def get_current_variables_table(self, closed_scope=False):

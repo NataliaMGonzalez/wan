@@ -108,6 +108,7 @@ class VariablesTable(Visitor_Recursive):
                 class_address = assign_into_extra_segment()
                 self.get_current_table()[var_name] = class_address
                 self.get_current_table()[class_address] = OrderedDict()
+                self.get_current_table()[(class_address, "type")] = class_type
                 instantiate_class(
                     self.get_current_table()[class_address],
                     class_variables)

@@ -17,3 +17,5 @@ quadruples = {}
 constants = {}
 
 memory = {}
+
+class_variables = {}

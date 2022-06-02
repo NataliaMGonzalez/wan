@@ -3,7 +3,7 @@ from typing import Union
 from lark import Token, Tree
 from numpy import prod
 from addresses_manager import assign_constant, assign_into_extra_segment
-from enums import ArrayOperations, AssignmentOperators, Operators
+from enums import ArrayOperations, AssignmentOperators, ClassOperations, Operators
 
 
 def var_exp(self, tree):
@@ -23,7 +23,7 @@ def get_variable_address(self, variable: Union[Token, Tree]) -> int:
     if (variable.data == "arr_exp"):
         return get_arr_exp(self, variable)
     if (variable.data == "self_attribute"):
-        return "my:{}".format(variable.children[0].value)
+        return get_self_attribute(self, variable)
     if (variable.data == "instance_attribute"):
         return get_instance_attribute(self, variable)
     if (variable.data == "function_eval"):
@@ -85,7 +85,7 @@ def get_arr_exp(self, tree: Tree) -> int:
     return array_address
 
 
-def get_instance_attribute(self, tree: Union[Token, Tree]):
+def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
     """
     When reading a class instance, get the address from its variables table.
     `instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)`
@@ -107,3 +107,19 @@ def get_instance_attribute(self, tree: Union[Token, Tree]):
         raise Exception("This variable has not been defined.")
 
     return instance_table[var_name]
+
+
+def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str]:
+    var_name = self_attribute.children[0].value
+    return (ClassOperations.SELF_ATTRIBUTE, var_name)
+
+
+def np_set_class_function(self, _tree: Tree):
+    current_class = self.addresses_stack[-1]
+    quadruple = (ClassOperations.SET_FUNCTION_CLASS, current_class)
+    self.quadruples.append(quadruple)
+
+
+def np_clear_class_function(self, _tree: Tree):
+    quadruple = (ClassOperations.CLEAR_FUNCTION_CLASS,)
+    self.quadruples.append(quadruple)

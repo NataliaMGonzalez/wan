@@ -21,7 +21,8 @@ class Quadruples(Visitor_Recursive):
     from quadruples.cycles import np_cycle_start, np_cycle_gotof, np_cycle_end
     from quadruples.input_output import np_write, read
     from quadruples.functions import function_eval, return_statement
-    from quadruples.var_exp import var_exp
+    from quadruples.var_exp import (
+        var_exp, np_set_class_function, np_clear_class_function)
 
     class_context = None
     function_context = None

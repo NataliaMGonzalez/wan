@@ -64,3 +64,9 @@ class FunctionOperators(Enum):
 
 class ArrayOperations(Enum):
     POINT_TO = "point_to"
+
+
+class ClassOperations(Enum):
+    SET_FUNCTION_CLASS = "SET_FUNCTION_CLASS"
+    CLEAR_FUNCTION_CLASS = "CLEAR_FUNCTION_CLASS"
+    SELF_ATTRIBUTE = "SELF_ATTRIBUTE"

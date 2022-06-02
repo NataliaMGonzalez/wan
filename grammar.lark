@@ -180,7 +180,12 @@ arr_exp: arr_exp_base (_ARRAY_START expression _ARRAY_END)+
 
 self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE VAR_ID
 
-instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)
+instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | class_function)
+
+class_function: np_set_class_function function_eval np_clear_class_function
+
+np_set_class_function:
+np_clear_class_function:
 
 function_call: (function_eval | var_exp) _LINE_END
 

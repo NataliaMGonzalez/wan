@@ -3,6 +3,7 @@ program full_functionality;
 # A character that can bend the elements.
 class Bender {
   int power;
+  int hp;
 }
 
 class Waterbender << Bender {
@@ -41,12 +42,13 @@ char name[30];
 Waterbender katara;
 Firebender zuko;
 katara:power = 100;
-# katara:hp = 100;
-# katara:water_power = 20;
+katara:hp = 100;
+katara:water_power = 20;
 # katara:waterFreeze();
 
 Mathematician ko_jin;
-fibonacci_to_do = input();
-# fibonacci_result = ko_jin:fibonacci(5);
-# print(fibonacci_result);
-print(katara:power);
+# int factorial_to_do, factorial_result;
+# factorial_to_do = input();
+# factorial_result = ko_jin:factorial(factorial_to_do);
+# print(factorial_result);
+# print(katara:power);

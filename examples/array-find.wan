@@ -1,0 +1,34 @@
+program array_find;
+
+int a[10], i, x;
+bool is_found;
+
+a[0] = 8;
+a[1] = 3;
+a[2] = 10;
+a[3] = 8;
+a[4] = 4;
+a[5] = 1;
+a[6] = 15;
+a[7] = 2;
+a[8] = 100;
+a[9] = 900;
+
+
+print("Number to look for in array: ");
+x = input();
+i = 0;
+is_found = false;
+
+while(i < 10){
+    if(a[i] == x){
+        print(x, "Was found in the array");
+        is_found = true;
+    }
+    i = i + 1;
+}
+
+if(is_found <> true){
+    print(x, "Was not found in the array");
+}
+

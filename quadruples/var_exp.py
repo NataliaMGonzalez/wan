@@ -27,14 +27,27 @@ def get_variable_address(self, variable: Union[Token, Tree]) -> int:
     if (variable.data == "instance_attribute"):
         return "instance_attribute"
     if (variable.data == "function_eval"):
-        function_id = variable.children[0].value
-        functions_directory = self.get_current_functions_directory()
-        function_attributes = functions_directory[function_id]
-        return function_attributes["returns"]
+        return get_function_eval(self, variable)
     if (variable.data == "arr_exp_base"):
         return get_variable_address(self, variable.children[0])
     if (variable.data == "var_exp"):
         return get_variable_address(self, variable.children[0])
+
+
+def get_function_eval(self, function_eval: Tree) -> int:
+    """
+    Address when the expression is a function evaluation.
+    `function_eval: FUNCTION_ID _OPEN_GROUP expression? (_MULTIPLE expression)* _CLOSE_GROUP`
+    """
+    function_id = function_eval.children[0].value
+    functions_directory = self.get_current_functions_directory()
+    function_attributes = functions_directory[function_id]
+    return_address = function_attributes["returns"]
+    temp_address = assign_into_extra_segment()
+    quad = (AssignmentOperators.ASSIGN, temp_address,
+            return_address, temp_address)
+    self.quadruples.append(quad)
+    return temp_address
 
 
 def get_arr_exp(self, tree: Tree) -> int:

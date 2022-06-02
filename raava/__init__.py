@@ -55,8 +55,12 @@ def format_quadruple(quadruple):
     for element in quadruple:
         to_add = element
         if isinstance(element, tuple):
-            base_address, expression = element
-            offset = memory[expression]
-            to_add = base_address + offset
+            to_add = get_array_address(element)
         formatted_quadruple.append(to_add)
     return tuple(formatted_quadruple)
+
+
+def get_array_address(element):
+    base_address, expression = element
+    offset = memory[expression]
+    return base_address + offset

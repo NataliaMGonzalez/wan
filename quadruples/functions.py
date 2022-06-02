@@ -20,10 +20,16 @@ def function_eval(self, tree: Tree):
             "The number of arguments does not match for function {}.".format(
                 id))
 
+    # To restore the value of the temporals after returning from function
+    temporals_saved = self.addresses_stack.copy()
+
     # Save all of the current variables in a stack to for later restoration
     if self.function_context != None:
         for address in vars_addresses:
             save_state_quadruple = (FunctionOperators.PUSH_IN_STACK, address)
+            self.quadruples.append(save_state_quadruple)
+        for addresses in temporals_saved:
+            save_state_quadruple = (FunctionOperators.PUSH_IN_STACK, addresses)
             self.quadruples.append(save_state_quadruple)
 
     # Update parameters with the arguments' values
@@ -40,6 +46,10 @@ def function_eval(self, tree: Tree):
 
     # When returning, retrive the stored variables to restore the state
     if self.function_context != None:
+        for address in temporals_saved[::-1]:
+            save_state_quadruple = (
+                FunctionOperators.PULL_FROM_STACK, address)
+            self.quadruples.append(save_state_quadruple)
         for address in vars_addresses[::-1]:
             retreival_quadruple = (FunctionOperators.PULL_FROM_STACK, address)
             self.quadruples.append(retreival_quadruple)

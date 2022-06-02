@@ -7,7 +7,7 @@ from quadruples import generate_quadruples
 import raava
 
 grammar = open("grammar.lark", 'r').read()
-code = open("examples/fibonacci.wan", 'r').read()
+code = open("examples/array-sort.wan", 'r').read()
 
 tree = parseTree(grammar, code)
 # print("Parse Tree:")

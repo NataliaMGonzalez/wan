@@ -20,7 +20,7 @@ int fibonacciIterative(int n){
         return 0;
     }
 
-    while(i < n){
+    while(i <= n){
         c = a + b;
         a = b;
         b = c;
@@ -30,9 +30,12 @@ int fibonacciIterative(int n){
     return b;
 }
 
-
 int a;
-
+print("Fibonacci Recursive:");
 a = fibonacciRecursive(10);
-
 print(a);
+
+int b;
+print("Fibonacci Iterative:");
+b = fibonacciIterative(10);
+print(b);

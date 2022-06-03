@@ -1,4 +1,4 @@
-from addresses_manager import assign_to_memory, assign_into_extra_segment
+from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_into_extra_segment
 from collections import OrderedDict
 from lark import Tree
 from lark.visitors import Visitor_Recursive
@@ -31,13 +31,13 @@ def add_variable_to_table(
         raise TypeError(
             "Variable \"{}\" already declared in this scope.".format(
                 var_name))
-    new_address = assign_to_memory(var_type)
+    new_address = assign_primitive_to_memory(var_type)
     table[var_name] = new_address
     total_size = int(prod(sizes))
     if len(sizes) > 0:
         table[(var_name, "size")] = sizes
     for _ in range(1, total_size):
-        assign_to_memory(var_type)
+        assign_primitive_to_memory(var_type)
 
 
 def instantiate_class(table, class_variables):
@@ -86,7 +86,7 @@ class VariablesTable(Visitor_Recursive):
     def function_parameter(self, tree):
         var_type, var_name = tree.children
         var_type = DataTypes(var_type.value)
-        new_address = assign_to_memory(var_type)
+        new_address = assign_primitive_to_memory(var_type)
         table = self.get_current_table()
         table[var_name.value] = new_address
 
@@ -105,7 +105,7 @@ class VariablesTable(Visitor_Recursive):
                 var_name, *array_sizes = declaration.children
                 var_name = var_name.value
                 sizes = list(map(lambda s: int(s.value), array_sizes))
-                class_address = assign_into_extra_segment()
+                class_address = assign_instance_to_memory()
                 self.get_current_table()[var_name] = class_address
                 self.get_current_table()[class_address] = OrderedDict()
                 self.get_current_table()[(class_address, "type")] = class_type
@@ -115,7 +115,7 @@ class VariablesTable(Visitor_Recursive):
                 if len(sizes) > 0:
                     self.get_current_table()[(var_name, "size")] = sizes
                 for _ in range(1, int(prod(sizes))):
-                    class_address = assign_into_extra_segment()
+                    class_address = assign_instance_to_memory()
                     self.get_current_table()[class_address] = OrderedDict()
                     class_table = self.get_current_table()[class_address]
                     instantiate_class(class_table, class_variables)

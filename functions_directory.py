@@ -1,7 +1,7 @@
 import globals
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
-from addresses_manager import assign_to_memory
+from addresses_manager import assign_primitive_to_memory
 
 
 def generate_functions_directory(tree):
@@ -52,7 +52,7 @@ class FunctionsDirectory(Visitor_Recursive):
         memory_needed = len(function_variables)
         return_address = None
         if return_type is not None:
-            return_address = assign_to_memory(return_type)
+            return_address = assign_primitive_to_memory(return_type)
         table_entry = {
             "returns": return_address,
             "parameters": parameter_addresses,

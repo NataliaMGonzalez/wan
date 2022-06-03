@@ -11,6 +11,7 @@ RESERVED_MEMORY = {
         DataTypes.FLOAT: 1000,
         DataTypes.BOOL: 1000,
         DataTypes.CHAR: 1000,
+        DataTypes.CLASS: 1000,
     },
     MemorySegments.CODE: 1000,
     MemorySegments.STACK: 1000,
@@ -25,12 +26,14 @@ INT_START_POSITION = DS_START_POSITION
 FLOAT_START_POSITION = INT_START_POSITION + DS_RESERVED_MEM[DataTypes.INT]
 BOOL_START_POSITION = FLOAT_START_POSITION + DS_RESERVED_MEM[DataTypes.FLOAT]
 CHAR_START_POSITION = BOOL_START_POSITION + DS_RESERVED_MEM[DataTypes.BOOL]
+CLASS_START_POSITION = CHAR_START_POSITION + DS_RESERVED_MEM[DataTypes.CHAR]
 
 DS_START_POSITIONS = {
     DataTypes.INT: INT_START_POSITION,
     DataTypes.FLOAT: FLOAT_START_POSITION,
     DataTypes.BOOL: BOOL_START_POSITION,
     DataTypes.CHAR: CHAR_START_POSITION,
+    DataTypes.CLASS: CLASS_START_POSITION,
 }
 
 # Code Segment section of the memory
@@ -55,6 +58,7 @@ counters = {
     DataTypes.FLOAT: FLOAT_START_POSITION,
     DataTypes.BOOL: BOOL_START_POSITION,
     DataTypes.CHAR: CHAR_START_POSITION,
+    DataTypes.CLASS: CLASS_START_POSITION,
     MemorySegments.EXTRA: ES_START_POSITION,
 }
 
@@ -71,7 +75,7 @@ def check_ds_memory_availability(var_type: DataTypes):
         raise Exception("Memory is full")
 
 
-def assign_to_memory(var_type: DataTypes) -> int:
+def assign_primitive_to_memory(var_type: DataTypes) -> int:
     """
     Based on the data type, allocates a space in data stack memory. \n
     Returns the resulting memory address.
@@ -79,6 +83,18 @@ def assign_to_memory(var_type: DataTypes) -> int:
     check_ds_memory_availability(var_type)
     memory_address = counters[var_type]
     counters[var_type] += 1
+    return memory_address
+
+
+def assign_instance_to_memory() -> int:
+    """
+    Based on the data type, allocates a space in data stack memory. \n
+    Returns the resulting memory address.
+    """
+    class_type = DataTypes.CLASS
+    check_ds_memory_availability(class_type)
+    memory_address = counters[class_type]
+    counters[class_type] += 1
     return memory_address
 
 

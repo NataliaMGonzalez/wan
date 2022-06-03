@@ -6,6 +6,7 @@ class DataTypes(Enum):
     INT = "int"
     FLOAT = "float"
     CHAR = "char"
+    CLASS = "class"
 
 
 class FunctionReturnTypes(Enum):

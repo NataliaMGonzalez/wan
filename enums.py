@@ -44,7 +44,6 @@ class MemorySegments(Enum):
 
 class InstructionPointerJump(Enum):
     GOTOF = "go_to_F"
-    GOTOT = "go_to_T"
     GOTO = "go_to"
 
 
@@ -60,7 +59,3 @@ class FunctionOperators(Enum):
     PUSH_IN_STACK = "PUSH_STACK"
     PULL_FROM_STACK = "PULL_FROM_STACK"
     SAVE_PARAM = "SAVE_PARAM"
-
-
-class ArrayOperations(Enum):
-    POINT_TO = "point_to"

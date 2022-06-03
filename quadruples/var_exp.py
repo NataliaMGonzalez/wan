@@ -44,8 +44,7 @@ def get_function_eval(self, function_eval: Tree) -> int:
     function_attributes = functions_directory[function_id]
     return_address = function_attributes["returns"]
     temp_address = assign_into_extra_segment()
-    quad = (AssignmentOperators.ASSIGN, temp_address,
-            return_address, temp_address)
+    quad = (AssignmentOperators.ASSIGN, temp_address, return_address)
     self.quadruples.append(quad)
     return temp_address
 
@@ -70,8 +69,7 @@ def get_arr_exp(self, tree: Tree) -> int:
 
     total_sum_address = assign_into_extra_segment()
     zero = assign_constant(0)
-    reset_quadruple = (AssignmentOperators.ASSIGN, total_sum_address,
-                       zero, total_sum_address)
+    reset_quadruple = (AssignmentOperators.ASSIGN, total_sum_address, zero)
     self.quadruples.append(reset_quadruple)
     for exp_address, dim in zip(exp_addresses, dims):
         dim_address = assign_constant(dim)

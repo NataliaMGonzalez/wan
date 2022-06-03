@@ -13,9 +13,9 @@ def function_eval(self, tree: Tree):
     func_directory: OrderedDict = self.get_current_functions_directory()
     function_attributes = None
     if len(self.classes_stack) > 0:
-        current_class = self.classes_stack[-1]
-        class_type = vars_table[(current_class, "type")]
-        func_directory = func_directory[class_type]
+        class_type = self.classes_stack.pop()
+        if class_type != self.class_context:
+            func_directory = func_directory[class_type]
 
     function_attributes: OrderedDict = func_directory[id]
 

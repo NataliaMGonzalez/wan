@@ -178,11 +178,16 @@ arr_exp: arr_exp_base (_ARRAY_START expression _ARRAY_END)+
     | instance_attribute
     | function_eval
 
-self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE (VAR_ID | class_function)
+self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE (VAR_ID | self_function)
 
-instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | class_function)
+self_function: np_set_self_function function_eval np_clear_self_function
 
-class_function: np_set_class_function function_eval np_clear_class_function
+np_set_self_function:
+np_clear_self_function:
+
+instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | instance_function)
+
+instance_function: np_set_class_function function_eval np_clear_class_function
 
 np_set_class_function:
 np_clear_class_function:

@@ -14,7 +14,7 @@ class Waterbender << Bender {
   }
 
   action waterFreeze() {
-    if (my:power > 10) {
+    if (1 + my:power > 10) {
       print("The water froze.");
     } else {
       print("The water did not freeze.");

@@ -48,23 +48,26 @@ def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str
     return (ClassOperations.SELF_ATTRIBUTE, var_name)
 
 
-def np_set_class_function(self, tree: Tree):
-    calling_self = len(self.addresses_stack) == 0
-    in_global_context = self.class_context == None
-    if in_global_context and calling_self:
+def np_set_self_function(self, _tree: Tree):
+    if self.class_context == None:
         raise Exception("Cannot call self attribute in global scope.")
+    quadruple = (ClassOperations.SET_FUNCTION_CLASS,
+                 ClassOperations.SELF_ATTRIBUTE)
+    class_type = self.class_context
+    self.classes_stack.append(class_type)
+    self.quadruples.append(quadruple)
 
-    class_type = None
-    if calling_self:
-        quadruple = (ClassOperations.SET_FUNCTION_CLASS,
-                     ClassOperations.SELF_ATTRIBUTE)
-        class_type = self.class_context
-    else:
-        class_address = self.addresses_stack[-1]
-        quadruple = (ClassOperations.SET_FUNCTION_CLASS, class_address)
-        vars_table = self.get_current_variables_table(closed_scope=True)
-        class_type = vars_table[(class_address, "type")]
 
+def np_clear_self_function(self, _tree: Tree):
+    quadruple = (ClassOperations.CLEAR_FUNCTION_CLASS,)
+    self.quadruples.append(quadruple)
+
+
+def np_set_class_function(self, _tree: Tree):
+    class_address = self.addresses_stack[-1]
+    quadruple = (ClassOperations.SET_FUNCTION_CLASS, class_address)
+    vars_table = self.get_current_variables_table(closed_scope=True)
+    class_type = vars_table[(class_address, "type")]
     self.classes_stack.append(class_type)
     self.quadruples.append(quadruple)
 

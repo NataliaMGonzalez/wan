@@ -4,6 +4,7 @@ from lark import Tree
 from lark.visitors import Visitor_Recursive
 from quadruples.declaration_jump import (
     create_declaration_jump, restore_declaration_jump)
+from quadruples.remaining_functions import retreive_remaining_function
 
 
 def generate_quadruples(tree):
@@ -33,6 +34,9 @@ class Quadruples(Visitor_Recursive):
 
     # Used when calling class instance functions
     classes_stack = []
+
+    # Function addresses remaining in the quadruples, filled when function is declared
+    remaining_functions = {}
 
     declaration_jump = None
 
@@ -74,7 +78,9 @@ class Quadruples(Visitor_Recursive):
             self.declaration_jump = create_declaration_jump(self)
         function_id: str = tree.children[0].value
         directory = self.get_current_functions_directory()
-        directory[function_id]["position"] = len(self.quadruples)
+        function_position: int = len(self.quadruples)
+        directory[function_id]["position"] = function_position
+        retreive_remaining_function(self, function_id, function_position)
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):

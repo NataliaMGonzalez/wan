@@ -9,10 +9,6 @@ class Bender {
 class Waterbender << Bender {
   int water_power;
 
-  action test() {
-    print("If you see this, then self functions work");
-  }
-
   action waterFreeze() {
     if (1 + my:power > 10) {
       print("The water froze.");
@@ -20,6 +16,10 @@ class Waterbender << Bender {
       print("The water did not freeze.");
     }
     my:test();
+  }
+
+  action test() {
+    print("If you see this, then self functions work");
   }
 }
 
@@ -45,16 +45,17 @@ float power;
 char name[30];
 
 Waterbender katara;
+katara:test();
 Firebender zuko;
 katara:power = 100;
 katara:hp = 100;
 int new_water_power;
-new_water_power = input();
-katara:power = new_water_power;
+katara:power = 15;
 katara:waterFreeze();
 
 Mathematician ko_jin;
 int factorial_to_do, factorial_result;
+print("Factorial: ");
 factorial_to_do = input();
 factorial_result = ko_jin:factorial(factorial_to_do);
 print(factorial_result);

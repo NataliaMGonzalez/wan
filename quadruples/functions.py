@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from lark import Tree
 from enums import FunctionOperators
+from quadruples.remaining_functions import set_function_remaining
 
 
 def function_eval(self, tree: Tree):
@@ -47,6 +48,8 @@ def function_eval(self, tree: Tree):
 
     # Go into function
     function_position = function_attributes["position"]
+    if function_position is None:
+        set_function_remaining(self, id)
     go_to_quadruple = (FunctionOperators.GOSUB, function_position)
     self.quadruples.append(go_to_quadruple)
 

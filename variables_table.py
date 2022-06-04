@@ -1,6 +1,6 @@
 from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_into_extra_segment
 from collections import OrderedDict
-from lark import Tree
+from lark import Token, Tree
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
 from numpy import prod
@@ -40,6 +40,30 @@ def add_variable_to_table(
         assign_primitive_to_memory(var_type)
 
 
+def declare_class_instance(
+        self, declaration_type: Token, declaration_ids: list):
+    class_type: str = declaration_type.value
+    class_variables: OrderedDict = self.classes_variables[class_type]
+    for declaration in declaration_ids:
+        var_name, *array_sizes = declaration.children
+        var_name = var_name.value
+        sizes = list(map(lambda s: int(s.value), array_sizes))
+        class_address = assign_instance_to_memory()
+        self.get_current_table()[var_name] = class_address
+        self.get_current_table()[class_address] = OrderedDict()
+        self.get_current_table()[(class_address, "type")] = class_type
+        instantiate_class(
+            self.get_current_table()[class_address],
+            class_variables)
+        if len(sizes) > 0:
+            self.get_current_table()[(var_name, "size")] = sizes
+        for _ in range(1, int(prod(sizes))):
+            class_address = assign_instance_to_memory()
+            self.get_current_table()[class_address] = OrderedDict()
+            class_table = self.get_current_table()[class_address]
+            instantiate_class(class_table, class_variables)
+
+
 def instantiate_class(table, class_variables):
     for variable in class_variables:
         var_type = class_variables[variable]["type"]
@@ -53,6 +77,8 @@ class VariablesTable(Visitor_Recursive):
     function_context = None
     variables_table = OrderedDict()
     classes_variables = OrderedDict()
+
+    remaining_instances = {}
 
     def get_current_table(self):
         table = self.variables_table
@@ -99,26 +125,7 @@ class VariablesTable(Visitor_Recursive):
         primitive_types = set(type.value for type in DataTypes)
         # Class instance
         if declaration_type not in primitive_types:
-            class_type: str = declaration_type.value
-            class_variables: OrderedDict = self.classes_variables[class_type]
-            for declaration in declaration_ids:
-                var_name, *array_sizes = declaration.children
-                var_name = var_name.value
-                sizes = list(map(lambda s: int(s.value), array_sizes))
-                class_address = assign_instance_to_memory()
-                self.get_current_table()[var_name] = class_address
-                self.get_current_table()[class_address] = OrderedDict()
-                self.get_current_table()[(class_address, "type")] = class_type
-                instantiate_class(
-                    self.get_current_table()[class_address],
-                    class_variables)
-                if len(sizes) > 0:
-                    self.get_current_table()[(var_name, "size")] = sizes
-                for _ in range(1, int(prod(sizes))):
-                    class_address = assign_instance_to_memory()
-                    self.get_current_table()[class_address] = OrderedDict()
-                    class_table = self.get_current_table()[class_address]
-                    instantiate_class(class_table, class_variables)
+            declare_class_instance(self, declaration_type, declaration_ids)
             return
 
         # Class variable

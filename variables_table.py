@@ -7,7 +7,9 @@ from numpy import prod
 
 
 def generate_variables_table(tree):
-    VariablesTable().visit(tree)
+    vars_table_object = VariablesTable()
+    vars_table_object.visit(tree)
+    vars_table_object.instantiate_classes()
     return VariablesTable.variables_table
 
 
@@ -49,18 +51,18 @@ def declare_class_instance(
         var_name = var_name.value
         sizes = list(map(lambda s: int(s.value), array_sizes))
         class_address = assign_instance_to_memory()
-        self.get_current_table()[var_name] = class_address
-        self.get_current_table()[class_address] = OrderedDict()
-        self.get_current_table()[(class_address, "type")] = class_type
+        self.current_table[var_name] = class_address
+        self.current_table[class_address] = OrderedDict()
+        self.current_table[(class_address, "type")] = class_type
         instantiate_class(
-            self.get_current_table()[class_address],
+            self.current_table[class_address],
             class_variables)
         if len(sizes) > 0:
-            self.get_current_table()[(var_name, "size")] = sizes
+            self.current_table[(var_name, "size")] = sizes
         for _ in range(1, int(prod(sizes))):
             class_address = assign_instance_to_memory()
-            self.get_current_table()[class_address] = OrderedDict()
-            class_table = self.get_current_table()[class_address]
+            self.current_table[class_address] = OrderedDict()
+            class_table = self.current_table[class_address]
             instantiate_class(class_table, class_variables)
 
 
@@ -78,9 +80,11 @@ class VariablesTable(Visitor_Recursive):
     variables_table = OrderedDict()
     classes_variables = OrderedDict()
 
-    remaining_instances = {}
+    # Class instances that have not been properly declared yet
+    remaining_instances = []
 
-    def get_current_table(self):
+    @property
+    def current_table(self) -> OrderedDict:
         table = self.variables_table
         if self.class_context is not None:
             table = table[self.class_context]
@@ -91,7 +95,7 @@ class VariablesTable(Visitor_Recursive):
     def class_id(self, tree):
         class_id = tree.children[0].value
         self.classes_variables[class_id] = OrderedDict()
-        self.get_current_table()[class_id] = OrderedDict()
+        self.current_table[class_id] = OrderedDict()
         self.class_context = class_id
 
     def class_inheritance(self, tree: Tree):
@@ -106,14 +110,14 @@ class VariablesTable(Visitor_Recursive):
 
     def function_id(self, tree):
         function_id = tree.children[0].value
-        self.get_current_table()[function_id] = OrderedDict()
+        self.current_table[function_id] = OrderedDict()
         self.function_context = function_id
 
     def function_parameter(self, tree):
         var_type, var_name = tree.children
         var_type = DataTypes(var_type.value)
         new_address = assign_primitive_to_memory(var_type)
-        table = self.get_current_table()
+        table = self.current_table
         table[var_name.value] = new_address
 
     def function_declaration(self, _tree):
@@ -125,7 +129,10 @@ class VariablesTable(Visitor_Recursive):
         primitive_types = set(type.value for type in DataTypes)
         # Class instance
         if declaration_type not in primitive_types:
-            declare_class_instance(self, declaration_type, declaration_ids)
+            # Save the instance declarations for later, to wait until all classes are declared
+            instance = (declaration_type, declaration_ids,
+                        self.class_context, self.function_context)
+            self.remaining_instances.append(instance)
             return
 
         # Class variable
@@ -140,9 +147,19 @@ class VariablesTable(Visitor_Recursive):
                 return
 
         # Regular declaration
-        class_table = self.get_current_table()
+        class_table = self.current_table
         for declaration in declaration_ids:
             var_name, *array_sizes = declaration.children
             var_name = var_name.value
             sizes = list(map(lambda s: int(s.value), array_sizes))
             add_variable_to_table(class_table, var_type, var_name, sizes)
+
+    def instantiate_classes(self):
+        """ Once all the classes have been declared, create all the instances. """
+        for instance in self.remaining_instances:
+            declaration_type, declaration_ids, class_context, function_context = instance
+            self.class_context = class_context
+            self.function_context = function_context
+            declare_class_instance(self, declaration_type, declaration_ids)
+            self.class_context = None
+            self.function_context = None

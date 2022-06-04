@@ -6,6 +6,8 @@ class Bender {
   int hp;
 }
 
+Waterbender katara;
+
 class Waterbender << Bender {
   int water_power;
 
@@ -43,8 +45,6 @@ class Mathematician {
 int strength, proficiency, intelligence;
 float power;
 char name[30];
-
-Waterbender katara;
 katara:test();
 Firebender zuko;
 katara:power = 100;

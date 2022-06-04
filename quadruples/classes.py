@@ -26,6 +26,7 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
             "returns"]
 
     var_name = var_or_function.value
+    # Check if class address is an instance or self attribute by checking if tuple
     instance_table = vars_table[class_address]
     if var_name not in instance_table:
         raise Exception("This variable has not been defined.")

@@ -5,9 +5,11 @@ from raava.memory import get_address
 
 
 def execute_array(quadruple: Tuple[ArrayOperations, int, int, int]):
-    _, base_address, exp_address, new_address = quadruple
+    instruction, base_address, exp_address, new_address = quadruple
     base_address = get_address(base_address)
     exp_address = get_address(exp_address)
-    offset = memory[exp_address]
-    value = memory[base_address + offset]
-    memory[new_address] = value
+
+    if instruction == ArrayOperations.POINT_TO:
+        offset = memory[exp_address]
+        target_address = base_address + offset
+        memory[new_address] = (target_address,)

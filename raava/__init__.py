@@ -1,7 +1,8 @@
 import globals
 from enums import (
-    AssignmentOperators, ClassOperations, Operators, InputOutputInstructions,
-    InstructionPointerJump, FunctionOperators)
+    ArrayOperations, AssignmentOperators, ClassOperations, Operators,
+    InputOutputInstructions, InstructionPointerJump, FunctionOperators)
+from raava.arrays import execute_array
 from raava.classes import execute_class_operation
 from raava.utils import execute_goto
 from raava.conditionals_cycles import execute_conditionals_cycles
@@ -25,8 +26,6 @@ def execute_quadruple(quadruple):
     """ Based on the type of quadruple, run the instructions. """
     operator = quadruple[0]
 
-    quadruple = format_quadruple(quadruple)
-
     if isinstance(operator, InputOutputInstructions):
         execute_input_output(quadruple)
 
@@ -35,6 +34,9 @@ def execute_quadruple(quadruple):
 
     if isinstance(operator, Operators):
         execute_expression(quadruple)
+
+    if isinstance(operator, ArrayOperations):
+        execute_array(quadruple)
 
     if isinstance(operator, InstructionPointerJump):
         execute_conditionals_cycles(quadruple)
@@ -47,21 +49,3 @@ def execute_quadruple(quadruple):
 
     if (operator == InstructionPointerJump.GOTO):
         execute_goto(quadruple)
-
-
-def format_quadruple(quadruple):
-    """ Solves arrays by correcting the array tuples into their final address."""
-    formatted_quadruple = []
-    for element in quadruple:
-        to_add = element
-        if isinstance(element, tuple):
-            to_add = get_array_address(element)
-        formatted_quadruple.append(to_add)
-    return tuple(formatted_quadruple)
-
-
-def get_array_address(element):
-    base_address, expression = element
-    memory = globals.memory
-    offset = memory[expression]
-    return base_address + offset

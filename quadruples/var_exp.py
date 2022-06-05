@@ -3,7 +3,7 @@ from typing import Union
 from lark import Token, Tree
 from numpy import prod
 from addresses_manager import assign_constant, assign_into_extra_segment
-from enums import AssignmentOperators, Operators
+from enums import ArrayOperations, AssignmentOperators, Operators
 from quadruples.classes import get_instance_attribute, get_self_attribute
 
 
@@ -82,5 +82,8 @@ def get_arr_exp(self, tree: Tree) -> int:
                     total_sum_address, total_sum_address)
         self.quadruples.append(quad_sum)
 
-    array_address = (base_address, total_sum_address)
-    return array_address
+    pointer_address = assign_into_extra_segment()
+    quadruple = (ArrayOperations.POINT_TO, base_address,
+                 total_sum_address, pointer_address)
+    self.quadruples.append(quadruple)
+    return pointer_address

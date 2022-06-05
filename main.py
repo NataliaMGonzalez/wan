@@ -29,13 +29,6 @@ globals.quadruples = quadruples
 # print("\nQuadruples:")
 # PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
-# Update the memory with the constant values
-memory = globals.memory
-for address in globals.constants:
-    memory[address] = globals.constants[address]
-# print("\nConstants:")
-# PrettyPrinter().pprint(globals.constants)
-
 # Move class variables into globals to be used in execution
 class_variables = globals.class_variables
 for key in globals.variables_table:

@@ -142,12 +142,12 @@ def assign_into_extra_segment() -> int:
 
 
 def assign_constant(value: Union[bool, int, float, str]) -> int:
-    """
-    Allocates a space in the Extra Memory segment and assigns the value into
-    the constants variable, which is used to initiate the memory on execution.
-    \nReturns its new address.
+    """Allocates a space in the Extra Memory segment and assigns the value
+    directly into memory, as this values will be used on execution.
+
+    Returns its new address.
     """
     memory_address = assign_into_extra_segment()
-    constants = globals.constants
-    constants[memory_address] = value
+    memory = globals.memory
+    memory[memory_address] = value
     return memory_address

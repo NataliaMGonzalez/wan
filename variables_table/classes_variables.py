@@ -13,31 +13,52 @@ def generate_classes_variables(tree: Tree):
 
 
 class ClassesVariables(Visitor_Recursive):
-    class_context = None
-    function_context = None
+    """Traverses all the neuralgic points placed accross the grammar in order to
+    generate a table with all of the variables for each class.
+    """
+
+    # The variables each class contains, to be used when instantiating the classes
     classes_variables = OrderedDict()
 
+    class_context: str = None               # If we are inside a class
+    function_context: str = None            # If we are inside a function
+
     def class_id(self, tree: Tree):
-        class_id = tree.children[0].value
+        """Set the class context to indicate we are now inside a class.
+        `class_id: CLASS_ID`
+        """
+        class_id: str = tree.children[0].value
         self.classes_variables[class_id] = OrderedDict()
         self.class_context = class_id
 
     def class_inheritance(self, tree: Tree):
+        """Place all of the variables of the father class into the child.
+        `class_id: CLASS_ID`
+        """
         class_id = self.class_context
-        parent_id = tree.children[0].value
+        parent_id: str = tree.children[0].value
         parent_table = self.classes_variables[parent_id]
         for key in parent_table:
             if key not in self.classes_variables[class_id]:
                 self.classes_variables[class_id][key] = parent_table[key]
 
     def class_declaration(self, _tree: Tree):
+        """Once we finish traversing the class, indicate that we are now outside.
+        `class_id: CLASS_ID`
+        """
         self.class_context = None
 
     def function_id(self, tree: Tree):
+        """Set the function context to indicate we are now inside a function.
+        \n`function_id: FUNCTION_ID`
+        """
         function_id = tree.children[0].value
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):
+        """Once we finish traversing the function, indicate that we are now outside.
+        `function_declaration: (FUNCTION_DECLARE | declaration_type) function_id _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK`
+        """
         self.function_context = None
 
     def vars_declaration(self, tree: Tree):

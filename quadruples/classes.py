@@ -1,3 +1,4 @@
+from addresses_manager import assign_into_extra_segment
 import globals
 from typing import Union
 from lark import Token, Tree
@@ -26,12 +27,11 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
             "returns"]
 
     var_name = var_or_function.value
-    # Check if class address is an instance or self attribute by checking if tuple
-    instance_table = vars_table[class_address]
-    if var_name not in instance_table:
-        raise Exception("This variable has not been defined.")
-
-    return instance_table[var_name]
+    pointer_address = assign_into_extra_segment()
+    quadruple = (ClassOperations.INSTANCE_ATTRIBUTE,
+                 class_address, var_name, pointer_address)
+    self.quadruples.append(quadruple)
+    return pointer_address
 
 
 def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str]:
@@ -46,7 +46,10 @@ def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str
             "returns"]
 
     var_name = var_or_function.value
-    return (ClassOperations.SELF_ATTRIBUTE, var_name)
+    pointer_address = assign_into_extra_segment()
+    quadruple = (ClassOperations.SELF_ATTRIBUTE, var_name, pointer_address)
+    self.quadruples.append(quadruple)
+    return pointer_address
 
 
 def np_set_self_function(self, _tree: Tree):

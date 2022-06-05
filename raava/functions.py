@@ -1,7 +1,8 @@
 from re import A
 import globals
 import raava.common
-from enums import FunctionOperators, InstructionPointerJump
+from enums import FunctionOperators
+from raava.memory import get_address
 
 memory = globals.memory
 
@@ -38,6 +39,7 @@ def execute_function(quadruple):
 def execute_return(quadruple):
     if len(quadruple) > 1:
         _, return_address, expression_address = quadruple
+        expression_address = get_address(expression_address)
         memory[return_address] = memory[expression_address]
     return_instruction = raava.common.instructions_stack.pop()
     raava.common.instruction_pointer = return_instruction

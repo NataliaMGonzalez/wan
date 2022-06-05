@@ -1,6 +1,7 @@
 from typing import Tuple
 from enums import Operators
 import globals
+from raava.memory import get_address
 
 memory = globals.memory
 
@@ -47,6 +48,8 @@ def execute_expression(quadruple: Tuple[Operators, int, int, int]):
     Executes the instruction that applies arithmetic or boolean operations.
     """
     operator, address_01, address_02, new_address = quadruple
+    address_01 = get_address(address_01)
+    address_02 = get_address(address_02)
     value_01 = memory[address_01]
     value_02 = memory[address_02]
     operation = EXPRESSION_OPERATIONS[operator]

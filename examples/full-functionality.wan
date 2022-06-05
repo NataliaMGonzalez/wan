@@ -7,22 +7,18 @@ class Bender {
 }
 
 Waterbender katara;
+katara:boomerang:attack_damage = input();
 
 class Waterbender << Bender {
   int water_power;
   Weapon boomerang;
 
   action waterFreeze() {
-    if (my:power > 10) {
+    if (my:boomerang:attack_damage > 10) {
       print("The water froze.");
     } else {
       print("The water did not freeze.");
     }
-    my:test();
-  }
-
-  action test() {
-    print("If you see this, then self functions work");
   }
 }
 
@@ -49,8 +45,6 @@ class Mathematician {
 
 int strength, proficiency, intelligence;
 katara:power = 100;
-katara:boomerang:attack_damage = 5;
-katara:hp = 100;
 katara:waterFreeze();
 
 print("Alles gut!");

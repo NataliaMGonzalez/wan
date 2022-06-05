@@ -1,3 +1,7 @@
+import globals
+from enums import (
+    AssignmentOperators, ClassOperations, Operators, InputOutputInstructions,
+    InstructionPointerJump, FunctionOperators)
 from raava.classes import execute_class_operation
 from raava.utils import execute_goto
 from raava.conditionals_cycles import execute_conditionals_cycles
@@ -5,16 +9,7 @@ from raava.input_output import execute_input_output
 from raava.functions import execute_function
 from raava.assignments import execute_assignment
 from raava.expressions import execute_expression
-from enums import (
-    AssignmentOperators, ClassOperations, InputOutputInstructions,
-    InstructionPointerJump, Operators)
-from enums import (AssignmentOperators, InputOutputInstructions,
-                   InstructionPointerJump, Operators, FunctionOperators)
-import globals
 import raava.common
-
-
-memory = globals.memory
 
 
 def execute():
@@ -60,21 +55,13 @@ def format_quadruple(quadruple):
     for element in quadruple:
         to_add = element
         if isinstance(element, tuple):
-            if element[0] == ClassOperations.SELF_ATTRIBUTE:
-                to_add = get_self_attribute(element)
-            else:
-                to_add = get_array_address(element)
+            to_add = get_array_address(element)
         formatted_quadruple.append(to_add)
     return tuple(formatted_quadruple)
 
 
 def get_array_address(element):
     base_address, expression = element
+    memory = globals.memory
     offset = memory[expression]
     return base_address + offset
-
-
-def get_self_attribute(element):
-    _, var_name = element
-    current_class = raava.common.current_class
-    return globals.class_variables[current_class][var_name]

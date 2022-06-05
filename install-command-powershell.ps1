@@ -1,2 +1,2 @@
 Function RunWan([string]$FileName) {python .\main.py $FileName}
-Set-Alias -Name wan -Value RunWan
+Set-Alias -Name bend -Value RunWan

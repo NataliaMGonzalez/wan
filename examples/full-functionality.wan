@@ -7,14 +7,19 @@ class Bender {
 }
 
 Waterbender katara;
-katara:boomerang:attack_damage = input();
+
+Weapon boomerang;
+print("Attack damage of the boomerang:");
+boomerang:attack_damage = input();
+
+katara:weapon = boomerang;
 
 class Waterbender << Bender {
   int water_power;
-  Weapon boomerang;
+  Weapon weapon;
 
   action waterFreeze() {
-    if (my:boomerang:attack_damage > 10) {
+    if (my:weapon:attack_damage > 10) {
       print("The water froze.");
     } else {
       print("The water did not freeze.");

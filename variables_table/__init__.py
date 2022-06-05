@@ -1,10 +1,10 @@
 from typing import List
-from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_into_extra_segment
+from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory
 from collections import OrderedDict
-from lark import Token, Tree
+from lark import Tree
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
-from numpy import prod, var
+from numpy import prod
 from variables_table.classes_variables import generate_classes_variables
 
 

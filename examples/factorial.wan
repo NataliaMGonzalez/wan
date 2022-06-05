@@ -21,9 +21,13 @@ int factorialIterative(int n) {
   return fact;
 }
 
-a = factorialRecursive(6);
+print("Insert to calculate factorial: ");
+int inp;
+inp = input();
+
+a = factorialRecursive(inp);
 print("factorial recursive: ", a);
 
-b = factorialIterative(5);
+b = factorialIterative(inp);
 print("factorial iterative: ", b);
 

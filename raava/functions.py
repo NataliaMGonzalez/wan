@@ -2,7 +2,9 @@ from re import A
 import globals
 import raava.common
 from enums import FunctionOperators
-from raava.memory import get_address
+from raava.memory import (
+    assign_into_code_stack, get_address, assign_into_function_stack,
+    retreive_from_code_stack, retreive_from_function_stack)
 
 memory = globals.memory
 
@@ -12,7 +14,7 @@ def execute_function(quadruple):
 
     if (operator == FunctionOperators.GOSUB):
         current_instruction = raava.common.instruction_pointer
-        raava.common.instructions_stack.append(current_instruction)
+        assign_into_code_stack(current_instruction)
         new_instruction = quadruple[1]
         raava.common.instruction_pointer = new_instruction - 1
 
@@ -24,11 +26,11 @@ def execute_function(quadruple):
         saved_value = None
         if(address in memory):
             saved_value = memory[address]
-        raava.common.function_stack.append(saved_value)
+        assign_into_function_stack(saved_value)
 
     if (operator == FunctionOperators.PULL_FROM_STACK):
         address = quadruple[1]
-        saved_value = raava.common.function_stack.pop()
+        saved_value = retreive_from_function_stack()
         memory[address] = saved_value
 
     if (operator == FunctionOperators.SAVE_PARAM):
@@ -41,5 +43,5 @@ def execute_return(quadruple):
         _, return_address, expression_address = quadruple
         expression_address = get_address(expression_address)
         memory[return_address] = memory[expression_address]
-    return_instruction = raava.common.instructions_stack.pop()
+    return_instruction = retreive_from_code_stack()
     raava.common.instruction_pointer = return_instruction

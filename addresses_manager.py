@@ -37,13 +37,13 @@ DS_START_POSITIONS = {
 }
 
 # Code Segment section of the memory
-CS_START_POSITION = 5000
-assert(CS_START_POSITION >= CHAR_START_POSITION +
-       RESERVED_MEMORY[MemorySegments.DATA][DataTypes.CHAR])
+CS_START_POSITION = 7000
+assert(CS_START_POSITION >= CLASS_START_POSITION +
+       RESERVED_MEMORY[MemorySegments.DATA][DataTypes.CLASS])
 
 # Stack Segment section of the memory
 SS_START_POSITION = 8000
-assert(SS_START_POSITION >= CHAR_START_POSITION +
+assert(SS_START_POSITION >= CS_START_POSITION +
        RESERVED_MEMORY[MemorySegments.CODE])
 
 # ES section of the memory
@@ -59,6 +59,8 @@ counters = {
     DataTypes.BOOL: BOOL_START_POSITION,
     DataTypes.CHAR: CHAR_START_POSITION,
     DataTypes.CLASS: CLASS_START_POSITION,
+    MemorySegments.CODE: CS_START_POSITION,
+    MemorySegments.STACK: SS_START_POSITION,
     MemorySegments.EXTRA: ES_START_POSITION,
 }
 

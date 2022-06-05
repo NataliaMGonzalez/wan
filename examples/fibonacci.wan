@@ -30,12 +30,14 @@ int fibonacciIterative(int n){
     return b;
 }
 
-int a;
+int a, inp;
+inp = input();
+
 print("Fibonacci Recursive:");
-a = fibonacciRecursive(10);
+a = fibonacciRecursive(inp);
 print(a);
 
 int b;
 print("Fibonacci Iterative:");
-b = fibonacciIterative(10);
+b = fibonacciIterative(inp);
 print(b);

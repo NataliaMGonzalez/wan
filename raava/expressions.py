@@ -1,4 +1,3 @@
-from typing import Tuple
 from enums import Operators
 import globals
 from raava.memory import get_address
@@ -27,6 +26,11 @@ def or_operation(x: str, y: str):
     return x or y
 
 
+def not_operation(x: str):
+    """ Logical operation for NOT. """
+    return not x
+
+
 EXPRESSION_OPERATIONS = {
     Operators.ADD: lambda x, y: int(x) + int(y),
     Operators.MINUS: lambda x, y: int(x) - int(y),
@@ -40,13 +44,22 @@ EXPRESSION_OPERATIONS = {
     Operators.REL_OP_NE: lambda x, y: int(x) != int(y),
     Operators.LOG_OP_AND: and_operation,
     Operators.LOG_OP_OR: or_operation,
+    Operators.NOT: not_operation,
 }
 
 
-def execute_expression(quadruple: Tuple[Operators, int, int, int]):
-    """
-    Executes the instruction that applies arithmetic or boolean operations.
-    """
+def execute_expression(quadruple: tuple):
+    """Executes the instruction that applies arithmetic or boolean operations."""
+    operator = quadruple[0]
+    if operator == Operators.NOT:
+        _, address, new_address = quadruple
+        address = get_address(address)
+        value = memory[address]
+        operation = EXPRESSION_OPERATIONS[operator]
+        result = operation(value)
+        memory[new_address] = result
+        return
+
     operator, address_01, address_02, new_address = quadruple
     address_01 = get_address(address_01)
     address_02 = get_address(address_02)

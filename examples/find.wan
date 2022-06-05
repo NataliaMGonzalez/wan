@@ -28,7 +28,7 @@ while(i < 10){
     i = i + 1;
 }
 
-if(is_found <> true){
-    print(x, "Was not found in the array");
+if(!is_found){
+    print("Was not found in the array");
 }
 

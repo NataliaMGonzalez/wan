@@ -44,6 +44,7 @@ ARIT_OPS_MULTIPLY: "*"
 ARIT_OPS_DIVIDE: "/"
 
 NEGATIVE_NUMBER: "-"
+NOT: "!"
 
 TYPE_BOOL: "bool"
 TYPE_INT: "int"
@@ -132,7 +133,9 @@ expression: or_expression
 
 ?or_expression: and_expression (BOOL_OP_OR and_expression)?
 
-?and_expression: comp_expression (BOOL_OP_AND comp_expression)?
+?and_expression: not_expression (BOOL_OP_AND not_expression)?
+
+?not_expression: (NOT)? comp_expression
 
 ?comp_expression: sum_expression (relop sum_expression)?
 

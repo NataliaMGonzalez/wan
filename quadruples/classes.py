@@ -16,7 +16,7 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
     # class, this will now be on the top of the addresses_stack
     class_address = self.addresses_stack.pop()
 
-    vars_table = self.get_current_variables_table()
+    vars_table = self.variables_table
 
     # In case the second parameter is a function, return that function's address.
     is_function: bool = isinstance(var_or_function, Tree)
@@ -70,7 +70,7 @@ def np_clear_self_function(self, _tree: Tree):
 def np_set_class_function(self, _tree: Tree):
     class_address = self.addresses_stack[-1]
     quadruple = (ClassOperations.SET_FUNCTION_CLASS, class_address)
-    vars_table = self.get_current_variables_table(closed_scope=True)
+    vars_table = self.current_variables_table
     class_type = vars_table[(class_address, "type")]
     self.classes_stack.append(class_type)
     self.quadruples.append(quadruple)

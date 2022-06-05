@@ -40,27 +40,36 @@ class Quadruples(Visitor_Recursive):
 
     declaration_jump = None
 
-    def get_current_variables_table(self, closed_scope=False):
+    @property
+    def variables_table(self):
         table = globals.variables_table
         if self.class_context is not None:
-            if closed_scope:
-                table = table[self.class_context]
-            else:
-                table = {**table, **table[self.class_context]}
+            table = {**table, **table[self.class_context]}
         if self.function_context is not None:
-            if closed_scope:
-                table = table[self.function_context]
-            else:
-                table = {**table, **table[self.function_context]}
+            table = {**table, **table[self.function_context]}
         return table
 
-    def get_current_functions_directory(self, closed_scope=False):
+    @property
+    def current_variables_table(self):
+        table = globals.variables_table
+        if self.class_context is not None:
+            table = table[self.class_context]
+        if self.function_context is not None:
+            table = table[self.function_context]
+        return table
+
+    @property
+    def functions_directory(self):
         directory = globals.functions_directory
         if self.class_context is not None:
-            if closed_scope:
-                directory = {**directory, **directory[self.class_context]}
-            else:
-                directory = directory[self.class_context]
+            directory = directory[self.class_context]
+        return directory
+
+    @property
+    def current_functions_directory(self):
+        directory = globals.functions_directory
+        if self.class_context is not None:
+            directory = {**directory, **directory[self.class_context]}
         return directory
 
     def class_id(self, tree: Tree):
@@ -77,7 +86,7 @@ class Quadruples(Visitor_Recursive):
         if self.declaration_jump is None:
             self.declaration_jump = create_declaration_jump(self)
         function_id: str = tree.children[0].value
-        directory = self.get_current_functions_directory()
+        directory = self.functions_directory
         function_position: int = len(self.quadruples)
         directory[function_id]["position"] = function_position
         retreive_remaining_function(self, function_id, function_position)

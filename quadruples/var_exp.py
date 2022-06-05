@@ -17,7 +17,7 @@ def get_variable_address(self, variable: Union[Token, Tree]) -> int:
     """ Based on a variable token or tree, get the variable address. """
     if isinstance(variable, Token):
         variable_name: str = variable.value
-        vars_table: OrderedDict = self.get_current_variables_table()
+        vars_table: OrderedDict = self.variables_table
         if variable_name not in vars_table:
             raise Exception("Variable has not been previously declared.")
         return vars_table[variable_name]
@@ -41,7 +41,7 @@ def get_function_eval(self, function_eval: Tree) -> int:
     `function_eval: FUNCTION_ID _OPEN_GROUP expression? (_MULTIPLE expression)* _CLOSE_GROUP`
     """
     function_id = function_eval.children[0].value
-    functions_directory = self.get_current_functions_directory()
+    functions_directory = self.functions_directory
     function_attributes = functions_directory[function_id]
     return_address = function_attributes["returns"]
     temp_address = assign_into_extra_segment()
@@ -60,7 +60,7 @@ def get_arr_exp(self, tree: Tree) -> int:
         exp_addresses = [exp_address] + exp_addresses
     base_address = get_variable_address(self, variable)
 
-    vars_table = self.get_current_variables_table()
+    vars_table = self.variables_table
     size = vars_table[(base_address, "size")]
 
     # Calculate dimensions based on the array sizes

@@ -7,11 +7,10 @@ from quadruples.remaining_functions import set_function_remaining
 def function_eval(self, tree: Tree):
     id_token, *argument_tokens = tree.children
     id: str = id_token.value
-    vars_table: OrderedDict = self.get_current_variables_table(
-        closed_scope=True)
+    vars_table: OrderedDict = self.current_variables_table
     vars_addresses: list[int] = list(vars_table.values())
 
-    func_directory: OrderedDict = self.get_current_functions_directory()
+    func_directory: OrderedDict = self.functions_directory
     function_attributes = None
     if len(self.classes_stack) > 0:
         class_type = self.classes_stack.pop()
@@ -65,7 +64,7 @@ def function_eval(self, tree: Tree):
 
 
 def return_statement(self, _tree: Tree):
-    func_directory: OrderedDict = self.get_current_functions_directory()
+    func_directory: OrderedDict = self.functions_directory
     function_attributes = func_directory[self.function_context]
     end_quadruple = (FunctionOperators.RETURN,)
     if "returns" in function_attributes:

@@ -2,33 +2,8 @@ from enums import Operators
 import globals
 from raava.memory import get_address
 
+
 memory = globals.memory
-
-
-def cast_to_bool(variable: str):
-    if variable == "true":
-        return True
-    else:
-        return False
-
-
-def and_operation(x: str, y: str):
-    """ Logical operation for AND. """
-    x = cast_to_bool(x)
-    y = cast_to_bool(y)
-    return x and y
-
-
-def or_operation(x: str, y: str):
-    """ Logical operation for OR. """
-    x = cast_to_bool(x)
-    y = cast_to_bool(y)
-    return x or y
-
-
-def not_operation(x: str):
-    """ Logical operation for NOT. """
-    return not x
 
 
 EXPRESSION_OPERATIONS = {
@@ -42,9 +17,9 @@ EXPRESSION_OPERATIONS = {
     Operators.REL_OP_LT: lambda x, y: int(x) < int(y),
     Operators.REL_OP_LE: lambda x, y: int(x) <= int(y),
     Operators.REL_OP_NE: lambda x, y: int(x) != int(y),
-    Operators.LOG_OP_AND: and_operation,
-    Operators.LOG_OP_OR: or_operation,
-    Operators.NOT: not_operation,
+    Operators.LOG_OP_AND: lambda x, y: x and y,
+    Operators.LOG_OP_OR: lambda x, y: x or y,
+    Operators.NOT: lambda x: not x,
 }
 
 

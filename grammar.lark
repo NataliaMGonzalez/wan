@@ -150,7 +150,8 @@ expression: or_expression
 
 ?term: (term (ARIT_OPS_DIVIDE | ARIT_OPS_MULTIPLY))? factor
 
-?factor: numerical_constant
+?factor: int_constant
+    | float_constant
     | char_constant
     | string_constant
     | bool_constant
@@ -158,7 +159,9 @@ expression: or_expression
     | var_exp
     | _OPEN_GROUP expression _CLOSE_GROUP
 
-numerical_constant: [NEGATIVE_NUMBER] (INT_VALUE | FLOAT_VALUE)
+int_constant: [NEGATIVE_NUMBER] INT_VALUE
+
+float_constant: [NEGATIVE_NUMBER] FLOAT_VALUE
 
 bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 

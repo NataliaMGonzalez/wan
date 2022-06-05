@@ -2,7 +2,6 @@ import globals
 import re
 from enums import DataTypes, MemorySegments
 from typing import Union
-from utils import str_to_bool
 
 
 RESERVED_MEMORY = {
@@ -142,18 +141,13 @@ def assign_into_extra_segment() -> int:
     return memory_address
 
 
-def assign_constant(value: Union[bool, int, str]) -> int:
+def assign_constant(value: Union[bool, int, float, str]) -> int:
     """
     Allocates a space in the Extra Memory segment and assigns the value into
     the constants variable, which is used to initiate the memory on execution.
     \nReturns its new address.
     """
     memory_address = assign_into_extra_segment()
-    if isinstance(value, str):
-        if re.search(r"\b(true|false)\b", value) is not None:
-            value = str_to_bool(value)
-        elif re.search(r"^[0-9]+$", value) is not None:
-            value = int(value)
     constants = globals.constants
     constants[memory_address] = value
     return memory_address

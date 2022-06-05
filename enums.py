@@ -64,6 +64,7 @@ class FunctionOperators(Enum):
 
 
 class ArrayOperations(Enum):
+    VERIFY = "VERIFY"
     POINT_TO = "point_to"
 
 

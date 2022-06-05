@@ -61,19 +61,21 @@ def get_arr_exp(self, tree: Tree) -> int:
     base_address = get_variable_address(self, variable)
 
     vars_table = self.variables_table
-    size = vars_table[(base_address, "size")]
+    sizes = vars_table[(base_address, "size")]
 
     # Calculate dimensions based on the array sizes
     dims = []
-    for idx in range(len(size)):
-        dims.append(int(prod(size[idx+1:])))
+    for idx in range(len(sizes)):
+        dims.append(int(prod(sizes[idx+1:])))
 
     total_sum_address = assign_into_extra_segment()
     zero = assign_constant(0)
     reset_quadruple = (AssignmentOperators.ASSIGN, total_sum_address, zero)
     self.quadruples.append(reset_quadruple)
-    for exp_address, dim in zip(exp_addresses, dims):
+    for exp_address, size, dim in zip(exp_addresses, sizes, dims):
         dim_address = assign_constant(dim)
+        verify_quad = (ArrayOperations.VERIFY, exp_address, size)
+        self.quadruples.append(verify_quad)
         mult_address = assign_into_extra_segment()
         quad_multiply = (Operators.MULTIPLY, exp_address,
                          dim_address, mult_address)

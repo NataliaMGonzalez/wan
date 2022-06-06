@@ -57,8 +57,10 @@ BOOL_VALUE_FALSE: /false/
 
 INT_VALUE: /\d+/
 FLOAT_VALUE: /\d+(\.\d+)?/
-CHAR_VALUE: /'[^"]*'/
-STRING_VALUE: /"[^"]*"/
+_CHAR_DELIMITER: /'/
+CHAR_VALUE: /[^']/
+_STRING_DELIMITER: /"/
+STRING_VALUE: /[^"]+/
 
 CLASS_ID: /([A-Z][a-z0-9]+)+/
 FUNCTION_ID: /\b[a-z][A-Za-z0-9]*\b/
@@ -165,9 +167,9 @@ float_constant: [NEGATIVE_NUMBER] FLOAT_VALUE
 
 bool_constant: BOOL_VALUE_TRUE | BOOL_VALUE_FALSE
 
-char_constant: CHAR_VALUE
+char_constant: _CHAR_DELIMITER CHAR_VALUE _CHAR_DELIMITER
 
-string_constant: STRING_VALUE 
+string_constant: _STRING_DELIMITER STRING_VALUE _STRING_DELIMITER 
 
 var_exp: VAR_ID
     | self_attribute

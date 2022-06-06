@@ -1,0 +1,6 @@
+program type_mismatch;
+
+int x;
+x = false;
+
+print(x);

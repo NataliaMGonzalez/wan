@@ -16,3 +16,5 @@ quadruples = {}
 memory = {}
 
 class_variables = {}
+
+class_prototypes = {}

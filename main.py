@@ -24,16 +24,16 @@ globals.functions_directory = functions_directory
 # print("\nFunctions Directory:")
 # PrettyPrinter().pprint(functions_directory)
 
-quadruples = generate_quadruples(tree)
-globals.quadruples = quadruples
-# print("\nQuadruples:")
-# PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
-
 # Move class variables into globals to be used in execution
 class_variables = globals.class_variables
 for key in globals.variables_table:
     if isinstance(key, int):
         class_variables[key] = globals.variables_table[key]
+
+quadruples = generate_quadruples(tree)
+globals.quadruples = quadruples
+# print("\nQuadruples:")
+# PrettyPrinter().pprint([{num: value} for num, value in enumerate(quadruples)])
 
 raava.execute()
 

@@ -39,9 +39,11 @@ class Operators(Enum):
 
 class MemorySegments(Enum):
     DATA = 1
-    CODE = 2
-    STACK = 3
+    TEMPORAL = 2
+    CONSTANTS = 3
     EXTRA = 4
+    CODE = 5
+    STACK = 6
 
 
 class InstructionPointerJump(Enum):

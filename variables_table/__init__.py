@@ -1,3 +1,4 @@
+import globals
 from typing import List
 from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory
 from collections import OrderedDict
@@ -17,6 +18,7 @@ def generate_variables_table(tree: Tree):
     functions directory creation and the quadruples creation.
     """
     classes_variables = generate_classes_variables(tree)
+    globals.class_prototypes = classes_variables
     vars_table_object = VariablesTable()
     vars_table_object.classes_variables = classes_variables
     vars_table_object.visit(tree)

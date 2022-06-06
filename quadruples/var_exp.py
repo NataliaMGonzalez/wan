@@ -2,8 +2,8 @@ from collections import OrderedDict
 from typing import Union
 from lark import Token, Tree
 from numpy import prod
-from addresses_manager import assign_constant, assign_into_extra_segment
-from enums import ArrayOperations, AssignmentOperators, Operators
+from addresses_manager import assign_constant, assign_into_extra_segment, assign_temporal, get_type_by_address
+from enums import ArrayOperations, AssignmentOperators, DataTypes, Operators
 from quadruples.classes import get_instance_attribute, get_self_attribute
 
 
@@ -44,7 +44,8 @@ def get_function_eval(self, function_eval: Tree) -> int:
     functions_directory = self.functions_directory
     function_attributes = functions_directory[function_id]
     return_address = function_attributes["returns"]
-    temp_address = assign_into_extra_segment()
+    return_type = get_type_by_address(return_address)
+    temp_address = assign_temporal(return_type)
     quad = (AssignmentOperators.ASSIGN, temp_address, return_address)
     self.quadruples.append(quad)
     return temp_address
@@ -84,7 +85,8 @@ def get_arr_exp(self, tree: Tree) -> int:
                     total_sum_address, total_sum_address)
         self.quadruples.append(quad_sum)
 
-    pointer_address = assign_into_extra_segment()
+    address_type = get_type_by_address(base_address)
+    pointer_address = assign_temporal(address_type)
     quadruple = (ArrayOperations.POINT_TO, base_address,
                  total_sum_address, pointer_address)
     self.quadruples.append(quadruple)

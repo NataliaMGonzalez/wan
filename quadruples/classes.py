@@ -1,8 +1,12 @@
-from addresses_manager import assign_into_extra_segment
+from ctypes import pointer
+from addresses_manager import assign_into_extra_segment, assign_temporal
 import globals
 from typing import Union
 from lark import Token, Tree
-from enums import ClassOperations
+from enums import ClassOperations, DataTypes
+
+
+primitive_types = set(type.value for type in DataTypes)
 
 
 def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
@@ -12,22 +16,30 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
     """
     _, var_or_function = tree.children
 
+    vars_table = self.variables_table
+
     # Due to the first section of the rule being var_exp, because it was a
     # class, this will now be on the top of the addresses_stack
     class_address = self.addresses_stack.pop()
-
-    vars_table = self.variables_table
+    class_type = vars_table[(class_address, "type")]
 
     # In case the second parameter is a function, return that function's address.
     is_function: bool = isinstance(var_or_function, Tree)
     if is_function:
         function_name = var_or_function.children[1].children[0].value
-        class_type = vars_table[(class_address, "type")]
         return globals.functions_directory[class_type][function_name][
             "returns"]
 
+    # Get the class type and assign the pointer based on it
     var_name = var_or_function.value
-    pointer_address = assign_into_extra_segment()
+    var_type = globals.class_prototypes[class_type][var_name]["type"]
+    pointer_address = None
+    if var_type in primitive_types:
+        pointer_address = assign_temporal(DataTypes(var_type))
+    else:
+        pointer_address = assign_into_extra_segment()
+        globals.variables_table[(pointer_address, "type")] = var_type
+
     quadruple = (ClassOperations.INSTANCE_ATTRIBUTE,
                  class_address, var_name, pointer_address)
     self.quadruples.append(quadruple)
@@ -36,17 +48,25 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
 
 def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str]:
     var_or_function = self_attribute.children[0]
+    class_type = self.class_context
 
     # In case the parameter is a function, return that function's address.
     is_function: bool = isinstance(var_or_function, Tree)
     if is_function:
         function_name = var_or_function.children[1].children[0].value
-        class_type = self.class_context
         return globals.functions_directory[class_type][function_name][
             "returns"]
 
+    # Get the class type and assign the pointer based on it
     var_name = var_or_function.value
-    pointer_address = assign_into_extra_segment()
+    var_type = globals.class_prototypes[class_type][var_name]["type"]
+    pointer_address = None
+    if var_type in primitive_types:
+        pointer_address = assign_temporal(DataTypes(var_type))
+    else:
+        pointer_address = assign_into_extra_segment()
+        globals.variables_table[(pointer_address, "type")] = var_type
+
     quadruple = (ClassOperations.SELF_ATTRIBUTE, var_name, pointer_address)
     self.quadruples.append(quadruple)
     return pointer_address

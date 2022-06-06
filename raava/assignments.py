@@ -1,5 +1,6 @@
 from typing import Tuple
-from enums import Operators
+from addresses_manager import CLASS_START_POSITION, DS_RESERVED_MEMORY, get_segment_size
+from enums import DataTypes, Operators
 import globals
 from raava.memory import get_address
 
@@ -19,6 +20,8 @@ def execute_assignment(quadruple: Tuple[Operators, int, int, int]):
 
 
 def is_class(address):
-    if address >= 5000 and address < 6000:
+    CLASS_END_POSITION = CLASS_START_POSITION + \
+        get_segment_size(DS_RESERVED_MEMORY[DataTypes.CHAR])
+    if address >= CLASS_START_POSITION and address < CLASS_END_POSITION:
         return True
     return False

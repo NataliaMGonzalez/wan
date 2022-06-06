@@ -1,90 +1,171 @@
+import copy
 import globals
-import re
 from enums import DataTypes, MemorySegments
 from typing import Union
 
 
+def get_segment_size(memory_segment: dict) -> int:
+    """Given a segment of the RESERVED MEMORY, calculate the size"""
+    total_size = 0
+    if isinstance(memory_segment, int):
+        return memory_segment
+    for key in memory_segment:
+        segment_size = memory_segment[key]
+        if isinstance(segment_size, dict):
+            segment_size = get_segment_size(segment_size)
+        total_size += segment_size
+    return total_size
+
+
+PRIMITIVE_SIZE = 500
+TEMPORAL_SIZE = 250
+CONSTANTS_SIZE = 250
+
+DS_SIZES = {
+    MemorySegments.DATA: 500,
+    MemorySegments.TEMPORAL: 250,
+    MemorySegments.CONSTANTS: 250,
+}
+
+
 RESERVED_MEMORY = {
     MemorySegments.DATA: {
-        DataTypes.INT: 1000,
-        DataTypes.FLOAT: 1000,
-        DataTypes.BOOL: 1000,
-        DataTypes.CHAR: 1000,
+        DataTypes.INT: {
+            MemorySegments.DATA: PRIMITIVE_SIZE,
+            MemorySegments.TEMPORAL: TEMPORAL_SIZE,
+            MemorySegments.CONSTANTS: CONSTANTS_SIZE,
+        },
+        DataTypes.FLOAT: {
+            MemorySegments.DATA: PRIMITIVE_SIZE,
+            MemorySegments.TEMPORAL: TEMPORAL_SIZE,
+            MemorySegments.CONSTANTS: CONSTANTS_SIZE,
+        },
+        DataTypes.BOOL: {
+            MemorySegments.DATA: PRIMITIVE_SIZE,
+            MemorySegments.TEMPORAL: TEMPORAL_SIZE,
+            MemorySegments.CONSTANTS: CONSTANTS_SIZE,
+        },
+        DataTypes.CHAR: {
+            MemorySegments.DATA: PRIMITIVE_SIZE,
+            MemorySegments.TEMPORAL: TEMPORAL_SIZE,
+            MemorySegments.CONSTANTS: CONSTANTS_SIZE,
+        },
         DataTypes.CLASS: 1000,
     },
     MemorySegments.CODE: 1000,
     MemorySegments.STACK: 1000,
-    MemorySegments.EXTRA: 1000
+    MemorySegments.EXTRA: 1000,
 }
 
 # Data Segment section of the memory
 DS_START_POSITION = 1000
-DS_RESERVED_MEM = RESERVED_MEMORY[MemorySegments.DATA]
+DS_RESERVED_MEMORY = RESERVED_MEMORY[MemorySegments.DATA]
 
+# Start positions
 INT_START_POSITION = DS_START_POSITION
-FLOAT_START_POSITION = INT_START_POSITION + DS_RESERVED_MEM[DataTypes.INT]
-BOOL_START_POSITION = FLOAT_START_POSITION + DS_RESERVED_MEM[DataTypes.FLOAT]
-CHAR_START_POSITION = BOOL_START_POSITION + DS_RESERVED_MEM[DataTypes.BOOL]
-CLASS_START_POSITION = CHAR_START_POSITION + DS_RESERVED_MEM[DataTypes.CHAR]
-
-DS_START_POSITIONS = {
-    DataTypes.INT: INT_START_POSITION,
-    DataTypes.FLOAT: FLOAT_START_POSITION,
-    DataTypes.BOOL: BOOL_START_POSITION,
-    DataTypes.CHAR: CHAR_START_POSITION,
-    DataTypes.CLASS: CLASS_START_POSITION,
-}
+FLOAT_START_POSITION = INT_START_POSITION + \
+    get_segment_size(DS_RESERVED_MEMORY[DataTypes.INT])
+BOOL_START_POSITION = FLOAT_START_POSITION + \
+    get_segment_size(DS_RESERVED_MEMORY[DataTypes.FLOAT])
+CHAR_START_POSITION = BOOL_START_POSITION + \
+    get_segment_size(DS_RESERVED_MEMORY[DataTypes.BOOL])
+CLASS_START_POSITION = CHAR_START_POSITION + \
+    get_segment_size(DS_RESERVED_MEMORY[DataTypes.CHAR])
 
 # Code Segment section of the memory
 CS_START_POSITION = 7000
-assert(CS_START_POSITION >= CLASS_START_POSITION +
-       RESERVED_MEMORY[MemorySegments.DATA][DataTypes.CLASS])
+assert(CS_START_POSITION >= DS_START_POSITION +
+       get_segment_size(RESERVED_MEMORY[MemorySegments.DATA]))
 
 # Stack Segment section of the memory
 SS_START_POSITION = 8000
 assert(SS_START_POSITION >= CS_START_POSITION +
-       RESERVED_MEMORY[MemorySegments.CODE])
+       get_segment_size(RESERVED_MEMORY[MemorySegments.CODE]))
 
 # ES section of the memory
 ES_START_POSITION = 9000
 assert(ES_START_POSITION >= SS_START_POSITION +
-       RESERVED_MEMORY[MemorySegments.STACK])
+       get_segment_size(RESERVED_MEMORY[MemorySegments.STACK]))
 
-
-# Counters for data types and memory segments
-counters = {
-    DataTypes.INT: INT_START_POSITION,
-    DataTypes.FLOAT: FLOAT_START_POSITION,
-    DataTypes.BOOL: BOOL_START_POSITION,
-    DataTypes.CHAR: CHAR_START_POSITION,
-    DataTypes.CLASS: CLASS_START_POSITION,
+START_POSITIONS = {
+    MemorySegments.DATA: {
+        DataTypes.INT: {
+            MemorySegments.DATA: INT_START_POSITION,
+            MemorySegments.TEMPORAL: INT_START_POSITION + PRIMITIVE_SIZE,
+            MemorySegments.CONSTANTS: INT_START_POSITION + PRIMITIVE_SIZE + TEMPORAL_SIZE,
+        },
+        DataTypes.FLOAT: {
+            MemorySegments.DATA: FLOAT_START_POSITION,
+            MemorySegments.TEMPORAL: FLOAT_START_POSITION + PRIMITIVE_SIZE,
+            MemorySegments.CONSTANTS: FLOAT_START_POSITION + PRIMITIVE_SIZE + TEMPORAL_SIZE,
+        },
+        DataTypes.BOOL: {
+            MemorySegments.DATA: BOOL_START_POSITION,
+            MemorySegments.TEMPORAL: BOOL_START_POSITION + PRIMITIVE_SIZE,
+            MemorySegments.CONSTANTS: BOOL_START_POSITION + PRIMITIVE_SIZE + TEMPORAL_SIZE,
+        },
+        DataTypes.CHAR: {
+            MemorySegments.DATA: CHAR_START_POSITION,
+            MemorySegments.TEMPORAL: CHAR_START_POSITION + PRIMITIVE_SIZE,
+            MemorySegments.CONSTANTS: CHAR_START_POSITION + PRIMITIVE_SIZE + TEMPORAL_SIZE,
+        },
+        DataTypes.CLASS: CLASS_START_POSITION,
+    },
     MemorySegments.CODE: CS_START_POSITION,
     MemorySegments.STACK: SS_START_POSITION,
     MemorySegments.EXTRA: ES_START_POSITION,
 }
 
 
-def check_ds_memory_availability(var_type: DataTypes):
+# Counters for data types and memory segments
+counters = copy.deepcopy(START_POSITIONS)
+data_segment = counters[MemorySegments.DATA]
+
+
+def check_ds_memory_availability(
+        var_type: DataTypes, segment: MemorySegments = None):
+    """Checks that the specified Data Memory segment still has enough space for
+    adding another address and raises an error if not.
     """
-    Checks that the Data Memory segment still has enough space for adding
-    another address and raises an error if not.
-    """
-    counter = counters[var_type]
-    start_position = DS_START_POSITIONS[var_type]
-    memory_avilable = DS_RESERVED_MEM[var_type]
+    if segment is None:
+        assert(var_type == DataTypes.CLASS)
+        counter = counters[MemorySegments.DATA][var_type]
+        start_position = START_POSITIONS[MemorySegments.DATA][var_type]
+        memory_avilable = RESERVED_MEMORY[MemorySegments.DATA][var_type]
+        if counter >= start_position + memory_avilable:
+            raise Exception("Memory is full")
+        return
+
+    counter = counters[MemorySegments.DATA][var_type][segment]
+    start_position = START_POSITIONS[MemorySegments.DATA][var_type][segment]
+    memory_avilable = RESERVED_MEMORY[MemorySegments.DATA][var_type][segment]
     if counter >= start_position + memory_avilable:
         raise Exception("Memory is full")
 
 
-def assign_primitive_to_memory(var_type: DataTypes) -> int:
+def assign_into_data_segment(
+        var_type: DataTypes, segment: MemorySegments = None) -> int:
+    """Based on the data type and segment, allocates a space in data stack memory.
+    \nReturns the resulting memory address.
     """
-    Based on the data type, allocates a space in data stack memory. \n
-    Returns the resulting memory address.
-    """
-    check_ds_memory_availability(var_type)
-    memory_address = counters[var_type]
-    counters[var_type] += 1
+    check_ds_memory_availability(var_type, segment)
+
+    if segment is None:
+        assert(var_type == DataTypes.CLASS)
+        memory_address = data_segment[var_type]
+        data_segment[var_type] += 1
+        return memory_address
+
+    memory_address = data_segment[var_type][segment]
+    data_segment[var_type][segment] += 1
     return memory_address
+
+
+def assign_primitive_to_memory(var_type: DataTypes) -> int:
+    """Based on the data type, allocates a space in data stack memory.
+    \nReturns the resulting memory address.
+    """
+    return assign_into_data_segment(var_type, MemorySegments.DATA)
 
 
 def assign_instance_to_memory() -> int:
@@ -92,11 +173,29 @@ def assign_instance_to_memory() -> int:
     Based on the data type, allocates a space in data stack memory. \n
     Returns the resulting memory address.
     """
-    class_type = DataTypes.CLASS
-    check_ds_memory_availability(class_type)
-    memory_address = counters[class_type]
-    counters[class_type] += 1
-    return memory_address
+    return assign_into_data_segment(DataTypes.CLASS)
+
+
+def assign_temporal(var_type: DataTypes) -> int:
+    """Based on the data type, allocates a space in data stack memory. \n
+    Returns the resulting memory address.
+    """
+    return assign_into_data_segment(var_type, MemorySegments.TEMPORAL)
+
+
+def assign_constant(
+        value: Union[bool, int, float, str],
+        var_type: DataTypes = None) -> int:
+    """Based on the data type, allocates a space in data stack memory. \n
+    Returns the resulting memory address.
+    """
+    address = None
+    if var_type is None:
+        address = assign_into_extra_segment()
+    else:
+        address = assign_into_data_segment(var_type, MemorySegments.CONSTANTS)
+    globals.memory[address] = value
+    return address
 
 
 def get_type_by_address(address: int) -> DataTypes:
@@ -105,11 +204,11 @@ def get_type_by_address(address: int) -> DataTypes:
     If given address is not in range for an int, float, char or bool, raises an
     exception.
     """
-    DS_END_POSITION = CHAR_START_POSITION + DS_RESERVED_MEM[DataTypes.CHAR]
-    not_a_data_segment_address = address < DS_START_POSITION or address >= DS_END_POSITION
-    if not_a_data_segment_address:
+    if not in_data_segment(address):
         raise Exception("")
 
+    if address >= CLASS_START_POSITION:
+        return DataTypes.CLASS
     if address >= CHAR_START_POSITION:
         return DataTypes.CHAR
     if address >= BOOL_START_POSITION:
@@ -141,13 +240,16 @@ def assign_into_extra_segment() -> int:
     return memory_address
 
 
-def assign_constant(value: Union[bool, int, float, str]) -> int:
-    """Allocates a space in the Extra Memory segment and assigns the value
-    directly into memory, as this values will be used on execution.
+def is_class(address) -> bool:
+    CLASS_END_POSITION = CLASS_START_POSITION + \
+        get_segment_size(DS_RESERVED_MEMORY[DataTypes.CHAR])
+    if address >= CLASS_START_POSITION and address < CLASS_END_POSITION:
+        return True
+    return False
 
-    Returns its new address.
-    """
-    memory_address = assign_into_extra_segment()
-    memory = globals.memory
-    memory[memory_address] = value
-    return memory_address
+
+def in_data_segment(address) -> bool:
+    data_segment_size = get_segment_size(RESERVED_MEMORY[MemorySegments.DATA])
+    DS_END_POSITION = DS_START_POSITION + data_segment_size
+    in_data_segment = address >= DS_START_POSITION and address < DS_END_POSITION
+    return in_data_segment

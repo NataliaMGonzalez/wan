@@ -8,9 +8,23 @@ memory = globals.memory
 
 
 def execute_input_output(quadruple: Tuple[InputOutputInstructions, int]):
-    instruction, address = quadruple
-    address = get_address(address)
+    """Executes the quadruples for input and output, printing and inputting."""
+    instruction = quadruple[0]
     if (instruction == InputOutputInstructions.WRITE):
-        print(memory[address], " ")
+        execute_write(quadruple)
     if (instruction == InputOutputInstructions.READ):
-        memory[address] = input(">> ")
+        execute_read(quadruple)
+
+
+def execute_write(quadruple: Tuple[InputOutputInstructions, int]):
+    """Executes the printing of the given address."""
+    _, address = quadruple
+    address = get_address(address)
+    print(memory[address], " ")
+
+
+def execute_read(quadruple: Tuple[InputOutputInstructions, int]):
+    """Executes the inputting of the given address."""
+    _, address = quadruple
+    address = get_address(address)
+    memory[address] = input(">> ")

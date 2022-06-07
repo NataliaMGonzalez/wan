@@ -13,6 +13,7 @@ INSTRUCTIONS_STACK_RESERVED_MEMORY = RESERVED_MEMORY[MemorySegments.CODE]
 
 
 def check_function_stack_availability():
+    """Raises an exeption if the function stack is full."""
     counter = counters[MemorySegments.STACK]
     start_position = SS_START_POSITION
     memory_avilable = FUNCTION_STACK_RESERVED_MEMORY
@@ -21,6 +22,7 @@ def check_function_stack_availability():
 
 
 def assign_into_function_stack(value):
+    """Places a value from the memory into the function stack."""
     check_function_stack_availability()
     memory_address = counters[MemorySegments.STACK]
     globals.memory[memory_address] = value
@@ -28,6 +30,7 @@ def assign_into_function_stack(value):
 
 
 def retreive_from_function_stack() -> Any:
+    """Retreives a value from the function stack to be loaded again in memory."""
     counter = counters[MemorySegments.STACK]
     if counter < SS_START_POSITION:
         raise Exception("Error un function handling.")
@@ -38,6 +41,7 @@ def retreive_from_function_stack() -> Any:
 
 
 def check_code_stack_availability():
+    """Raises an exeption if the code stack is full."""
     counter = counters[MemorySegments.CODE]
     start_position = CS_START_POSITION
     memory_avilable = INSTRUCTIONS_STACK_RESERVED_MEMORY
@@ -46,6 +50,7 @@ def check_code_stack_availability():
 
 
 def assign_into_code_stack(value):
+    """Places a value from the memory into the code stack."""
     check_code_stack_availability()
     memory_address = counters[MemorySegments.CODE]
     globals.memory[memory_address] = value
@@ -53,9 +58,10 @@ def assign_into_code_stack(value):
 
 
 def retreive_from_code_stack() -> int:
+    """Retreives the instruction pointer from the code stack to be loaded again in memory."""
     counter = counters[MemorySegments.CODE]
     if counter < CS_START_POSITION:
-        raise Exception("Error un function handling.")
+        raise Exception("Error on code stack handling.")
     memory_address = counters[MemorySegments.CODE] - 1
     value = globals.memory[memory_address]
     counters[MemorySegments.CODE] -= 1
@@ -63,7 +69,7 @@ def retreive_from_code_stack() -> int:
 
 
 def get_address(address) -> int:
-    """ Traverse the pointers until finding a direct value. """
+    """Recursively traverse into the pointers until finding a direct value."""
     memory = globals.memory
     if address not in memory:
         return address

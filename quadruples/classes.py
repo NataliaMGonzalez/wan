@@ -32,8 +32,8 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
             "returns"]
 
     # Get the class type and assign the pointer based on it
-    var_name = var_or_function.value
-    var_type = globals.class_prototypes[class_type][var_name]["type"]
+    var_name: str = var_or_function.value
+    var_type: str = globals.class_prototypes[class_type][var_name]["type"]
     pointer_address = None
     if var_type in primitive_types:
         pointer_address = assign_temporal(DataTypes(var_type))

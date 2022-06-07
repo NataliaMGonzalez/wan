@@ -24,17 +24,15 @@ EXPRESSION_OPERATIONS = {
 
 
 def execute_expression(quadruple: tuple):
-    """Executes the instruction that applies arithmetic or boolean operations."""
-    operator = quadruple[0]
-    if operator == Operators.NOT:
-        _, address, new_address = quadruple
-        address = get_address(address)
-        value = memory[address]
-        operation = EXPRESSION_OPERATIONS[operator]
-        result = operation(value)
-        memory[new_address] = result
+    """Executes the instruction that applies to operations."""
+    if len(quadruple) == 3:
+        execute_unary_expression(quadruple)
         return
+    execute_binary_expression(quadruple)
 
+
+def execute_binary_expression(quadruple: tuple):
+    """Executes the expression for binary operators."""
     operator, address_01, address_02, new_address = quadruple
     address_01 = get_address(address_01)
     address_02 = get_address(address_02)
@@ -43,3 +41,14 @@ def execute_expression(quadruple: tuple):
     operation = EXPRESSION_OPERATIONS[operator]
     result = operation(value_01, value_02)
     memory[new_address] = result
+
+
+def execute_unary_expression(quadruple: tuple):
+    """Executes the expression for unary operators."""
+    operator, address, new_address = quadruple
+    address = get_address(address)
+    value = memory[address]
+    operation = EXPRESSION_OPERATIONS[operator]
+    result = operation(value)
+    memory[new_address] = result
+    return

@@ -1,4 +1,4 @@
-from re import A
+from typing import Tuple
 import globals
 import raava.common
 from enums import FunctionOperators
@@ -9,7 +9,8 @@ from raava.memory import (
 memory = globals.memory
 
 
-def execute_function(quadruple):
+def execute_function(quadruple: Tuple):
+    """Executes the quadruples for functions."""
     operator: FunctionOperators = quadruple[0]
 
     if (operator == FunctionOperators.GOSUB):
@@ -38,7 +39,13 @@ def execute_function(quadruple):
         memory[param_address] = memory[expression_address]
 
 
-def execute_return(quadruple):
+def execute_return(quadruple: Tuple[FunctionOperators, int, int]):
+    """Executes the return quadruple.
+
+    To the assigned address in the functions directory, update it with the
+    expression value. Then retreive the previous instruction pointer from the
+    code stack and update the pointer to it.
+    """
     if len(quadruple) > 1:
         _, return_address, expression_address = quadruple
         expression_address = get_address(expression_address)

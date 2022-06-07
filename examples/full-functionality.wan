@@ -19,7 +19,8 @@ class Waterbender << Bender {
   Weapon weapon;
 
   action waterFreeze() {
-    if (my:weapon:attack_damage > 10) {
+    print(my:power);
+    if (my:power + my:weapon:attack_damage > 10) {
       print("The water froze.");
     } else {
       print("The water did not freeze.");
@@ -49,7 +50,6 @@ class Mathematician {
 }
 
 int strength, proficiency, intelligence;
-katara:power = 100;
+print("Katara power:");
+katara:power = input();
 katara:waterFreeze();
-
-print("Alles gut!");

@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from lark import Tree
+from addresses_manager import get_type_by_address
 from variables_table import get_variable_size
 from enums import FunctionOperators
 from quadruples.remaining_functions import set_function_remaining
@@ -43,21 +44,15 @@ def function_eval(self, tree: Tree):
     # Save all of the current variables in a stack to for later restoration
     if self.function_context != None:
         for address in vars_addresses:
-            size = get_variable_size(vars_table, address)
-            for i in range(size):
-                save_state_quadruple = (
-                    FunctionOperators.PUSH_IN_STACK, address + i)
-                self.quadruples.append(save_state_quadruple)
+            push_in_stack(self, vars_table, address)
         for addresses in temporals_saved:
             save_state_quadruple = (FunctionOperators.PUSH_IN_STACK, addresses)
             self.quadruples.append(save_state_quadruple)
 
     # Update parameters with the arguments' values
     for parameter in func_parameters:
-        argument_address = self.addresses_stack.pop()
-        assignment_quadruple = (
-            FunctionOperators.SAVE_PARAM, parameter, argument_address)
-        self.quadruples.append(assignment_quadruple)
+        parameter_attributes = func_parameters[parameter]
+        save_param(self, parameter_attributes)
 
     # Go into function
     function_position = function_attributes["position"]
@@ -79,6 +74,30 @@ def function_eval(self, tree: Tree):
                 retreival_quadruple = (
                     FunctionOperators.PULL_FROM_STACK, address_index)
                 self.quadruples.append(retreival_quadruple)
+
+
+def push_in_stack(self, vars_table: OrderedDict, address: int):
+    """Create the quadruple for pushing a specific address into the function stack."""
+    size = get_variable_size(vars_table, address)
+    for i in range(size):
+        save_state_quadruple = (
+            FunctionOperators.PUSH_IN_STACK, address + i)
+        self.quadruples.append(save_state_quadruple)
+
+
+def save_param(self, parameter_attributes: OrderedDict):
+    """Creates the save param quadruple.
+
+    Raises an error if there is a type mismatch between the parameter and the
+    argument to save.
+    """
+    argument_address = self.addresses_stack.pop()
+    argument_type = get_type_by_address(argument_address)
+    size = parameter_attributes["size"]
+    parameter_address = parameter_attributes["address"]
+    assignment_quadruple = (
+        FunctionOperators.SAVE_PARAM, parameter_address, argument_address)
+    self.quadruples.append(assignment_quadruple)
 
 
 def return_statement(self, _tree: Tree):

@@ -106,7 +106,7 @@ function_id: FUNCTION_ID
 
 _function_parameters: function_parameter? (_MULTIPLE function_parameter)*
 
-function_parameter: declaration_type VAR_ID
+function_parameter: declaration_type VAR_ID (_ARRAY_START INT_VALUE _ARRAY_END)*
 
 function_body: function_statement*
 

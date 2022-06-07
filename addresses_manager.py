@@ -4,6 +4,9 @@ from enums import DataTypes, MemorySegments
 from typing import Union
 
 
+primitive_types = set(type.value for type in DataTypes)
+
+
 def get_segment_size(memory_segment: dict) -> int:
     """Given a segment of the RESERVED MEMORY, calculate the size"""
     total_size = 0
@@ -253,3 +256,19 @@ def in_data_segment(address) -> bool:
     DS_END_POSITION = DS_START_POSITION + data_segment_size
     in_data_segment = address >= DS_START_POSITION and address < DS_END_POSITION
     return in_data_segment
+
+
+def is_primitive(address: int) -> bool:
+    address_type = get_type_by_address(address)
+    if address_type.value in primitive_types:
+        return True
+    return False
+
+
+def is_temporal(address: int) -> bool:
+    if not in_data_segment(address):
+        raise Exception("Not in Data Segment.")
+    if not is_primitive(address):
+        raise Exception("Not a primitive value.")
+    position_in_segment = address % 1000
+    return position_in_segment >= PRIMITIVE_SIZE and position_in_segment < PRIMITIVE_SIZE + TEMPORAL_SIZE

@@ -21,8 +21,8 @@ globals.variables_table = variables_table
 
 functions_directory = generate_functions_directory(tree)
 globals.functions_directory = functions_directory
-print("\nFunctions Directory:")
-PrettyPrinter().pprint(functions_directory)
+# print("\nFunctions Directory:")
+# PrettyPrinter().pprint(functions_directory)
 
 # Move class variables into globals to be used in execution
 class_variables = globals.class_variables

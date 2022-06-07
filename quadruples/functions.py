@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from lark import Tree
-from addresses_manager import get_type_by_address
-from variables_table import get_variable_size
+from addresses_manager import get_type_by_address, is_temporal
+from variables_table import get_variable_size, is_array
 from enums import FunctionOperators
 from quadruples.remaining_functions import set_function_remaining
 
@@ -50,8 +50,7 @@ def function_eval(self, tree: Tree):
             self.quadruples.append(save_state_quadruple)
 
     # Update parameters with the arguments' values
-    for parameter in func_parameters:
-        parameter_attributes = func_parameters[parameter]
+    for parameter_attributes in func_parameters[::-1]:
         save_param(self, parameter_attributes)
 
     # Go into function
@@ -92,12 +91,33 @@ def save_param(self, parameter_attributes: OrderedDict):
     argument to save.
     """
     argument_address = self.addresses_stack.pop()
-    argument_type = get_type_by_address(argument_address)
-    size = parameter_attributes["size"]
     parameter_address = parameter_attributes["address"]
-    assignment_quadruple = (
-        FunctionOperators.SAVE_PARAM, parameter_address, argument_address)
+    is_pointer = parameter_attributes["is_pointer"]
+
+    # Check for function type mismatch
+    check_parameter_mismatch(self, argument_address, parameter_address)
+
+    operation = FunctionOperators.SAVE_PARAM if not is_pointer else FunctionOperators.SAVE_POINTER_PARAM
+    assignment_quadruple = (operation, parameter_address, argument_address)
     self.quadruples.append(assignment_quadruple)
+
+
+def check_parameter_mismatch(self, argument: int, parameter: int):
+    """Checks if the given argument matches the parameter type."""
+    argument_type = get_type_by_address(argument)
+    vars_table: OrderedDict = self.current_variables_table
+    argument_is_array = is_array(vars_table, argument)
+    parameter_type = get_type_by_address(parameter)
+    parameter_is_temporal = is_temporal(parameter)
+    if argument_type != parameter_type:
+        raise TypeError(
+            "The function attribute and the parameter are not of the same type")
+    if argument_is_array and not parameter_is_temporal:
+        raise TypeError(
+            "The function receives a standard value but is given an array.")
+    if parameter_is_temporal and not argument_is_array:
+        raise TypeError(
+            "The function receives an array but is given a standard value.")
 
 
 def return_statement(self, _tree: Tree):

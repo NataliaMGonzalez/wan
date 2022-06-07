@@ -3,7 +3,7 @@ from numpy import prod
 import globals
 from lark.visitors import Visitor_Recursive
 from enums import DataTypes
-from addresses_manager import assign_primitive_to_memory
+from addresses_manager import assign_primitive_to_memory, is_class
 
 
 def generate_functions_directory(tree):
@@ -51,10 +51,10 @@ class FunctionsDirectory(Visitor_Recursive):
                     function_id))
 
         # Creating the parameters objects
-        parameter_entries = {}
+        parameter_entries = []
         for parameter in parameters:
-            self.insert_in_parameter_entry(
-                parameter_entries, function_id, parameter)
+            parameter_entry = self.get_parameter_entry(function_id, parameter)
+            parameter_entries.append(parameter_entry)
 
         # Specifying the return address
         return_type = None
@@ -71,11 +71,10 @@ class FunctionsDirectory(Visitor_Recursive):
         }
         directory[function_id] = table_entry
 
-    def insert_in_parameter_entry(
-            self, parameter_entries: dict, function_id: str, parameter: Tree):
-        _, name, *sizes = parameter.children
+    def get_parameter_entry(self, function_id: str, parameter: Tree) -> dict:
+        _, name_token, *size_tokens = parameter.children
         function_variables = self.current_table[function_id]
-        name = name.value
-        total_size = int(prod(sizes))
-        address = function_variables[name]
-        parameter_entries[name] = {"address": address, "size": total_size}
+        address = function_variables[name_token.value]
+        is_array = len(size_tokens) > 0
+        is_pointer = is_array or is_class(address)
+        return {"address": address, "is_pointer": is_pointer}

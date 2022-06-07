@@ -38,6 +38,11 @@ def execute_function(quadruple: Tuple):
         _, param_address, expression_address = quadruple
         memory[param_address] = memory[expression_address]
 
+    if (operator == FunctionOperators.SAVE_POINTER_PARAM):
+        _, param_address, expression_address = quadruple
+        if param_address != expression_address:
+            memory[param_address] = (expression_address,)
+
 
 def execute_return(quadruple: Tuple[FunctionOperators, int, int]):
     """Executes the return quadruple.

@@ -1,6 +1,6 @@
 import globals
 from typing import List
-from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory
+from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_temporal, is_temporal
 from collections import OrderedDict
 from lark import Tree
 from lark.visitors import Visitor_Recursive
@@ -80,11 +80,19 @@ class VariablesTable(Visitor_Recursive):
         """Assign parameter in variables table and add it to the function's table.
         `function_parameter: declaration_type VAR_ID`
         """
-        var_type, var_name = tree.children
+        var_type, var_name, *size_tokens = tree.children
         var_type = DataTypes(var_type.value)
-        new_address = assign_primitive_to_memory(var_type)
+        new_address = None
+        is_array = len(size_tokens) > 0
+        if not is_array:
+            new_address = assign_primitive_to_memory(var_type)
+        else:
+            new_address = assign_temporal(var_type)
         table = self.current_table
         table[var_name.value] = new_address
+        if is_array:
+            sizes = list(map(lambda s: int(s.value), size_tokens))
+            table[(new_address, "size")] = sizes
 
     def vars_declaration(self, tree: Tree):
         """Add the variables declared into the variables table in the current context.
@@ -151,8 +159,15 @@ def instantiate_class(self, class_type: str) -> int:
 
 
 def get_variable_size(table: OrderedDict, address: int) -> bool:
-    """Indicates if the given address is the starting point of an array."""
+    """Returns the total amount of addresses a variable takes."""
     if (address, "size") not in table:
+        return 1
+    if is_temporal(address):
         return 1
     sizes = table[(address, "size")]
     return int(prod(sizes))
+
+
+def is_array(table: OrderedDict, address: int) -> bool:
+    """Indicates if the given address is the starting point of an array."""
+    return (address, "size") in table

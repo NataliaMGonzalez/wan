@@ -19,7 +19,9 @@ def get_variable_address(self, variable: Union[Token, Tree]) -> int:
         variable_name: str = variable.value
         vars_table: OrderedDict = self.variables_table
         if variable_name not in vars_table:
-            raise Exception("Variable has not been previously declared.")
+            raise Exception(
+                "Variable \"{}\" has not been previously declared.".format(
+                    variable_name))
         return vars_table[variable_name]
     if (variable.data == "arr_exp"):
         return get_arr_exp(self, variable)

@@ -109,6 +109,58 @@ semantic_cube = {
             DataTypes.CHAR: type_error
         }
     },
+    Operators.LOG_OP_AND: {
+        DataTypes.INT: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.FLOAT: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.CHAR: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.BOOL: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: DataTypes.BOOL,
+            DataTypes.CHAR: type_error
+        }
+    },
+    Operators.LOG_OP_OR: {
+        DataTypes.INT: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.FLOAT: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.CHAR: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: type_error,
+            DataTypes.CHAR: type_error
+        },
+        DataTypes.BOOL: {
+            DataTypes.INT: type_error,
+            DataTypes.FLOAT: type_error,
+            DataTypes.BOOL: DataTypes.BOOL,
+            DataTypes.CHAR: type_error
+        }
+    },
     Operators.REL_OP_GT: {
         DataTypes.INT: {
             DataTypes.INT: DataTypes.BOOL,

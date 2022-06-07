@@ -4,7 +4,9 @@ from enums import AssignmentOperators
 
 
 def check_operations(address_01: int, address_02: int):
-    """Raises an exception if the two variable types from the addresses are not
+    """Checks that the addresses are the same for the assignation.
+
+    Raises an exception if the two variable types from the addresses are not
     the same type, therefore not compatible for assignation.
     """
     type_01 = get_type_by_address(address_01)
@@ -14,6 +16,15 @@ def check_operations(address_01: int, address_02: int):
 
 
 def assignment(self, _tree: Tree):
+    """Creates the assignment quadruple.
+
+    Creates an assignment quadruple where the first expression variable will
+    be set to the second expression variable.
+
+    Raises an error if the expression types are incompatible.
+
+    `assignment: var_exp ASSIGNMENT (read | expression) _LINE_END`
+    """
     assignor: int = self.addresses_stack.pop()
     asignee: int = self.addresses_stack.pop()
     if in_data_segment(assignor) and in_data_segment(asignee):

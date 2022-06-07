@@ -1,3 +1,4 @@
+from typing import List
 from enums import FunctionOperators
 import globals
 from lark import Tree
@@ -7,12 +8,18 @@ from quadruples.declaration_jump import (
 from quadruples.remaining_functions import retreive_remaining_function
 
 
-def generate_quadruples(tree):
+def generate_quadruples(tree) -> List[tuple]:
+    """Traverse the code to generate all the quadruples to be executed."""
     Quadruples().visit(tree)
     return Quadruples.quadruples
 
 
 class Quadruples(Visitor_Recursive):
+    """Quadruples generator in each of the neuralgic points and rules.
+
+    Traverses all the neuralgic points and rules placed accross the grammar in
+    order to generate the quadruples to be executed.
+    """
     from quadruples.expressions import (
         or_expression, and_expression, comp_expression, sum_expression, term,
         not_expression)
@@ -29,22 +36,26 @@ class Quadruples(Visitor_Recursive):
     from quadruples.classes import (
         np_set_class_function, np_clear_class_function)
 
-    class_context = None
-    function_context = None
-    quadruples = []
-    addresses_stack = []
-    jump_stack = []
+    quadruples = []            # The final quadruples list
 
-    # Used when calling class instance functions
-    classes_stack = []
+    class_context = None       # If we are inside a class
+    function_context = None    # If we are inside a function
+
+    addresses_stack = []       # List of addresses seen in the current statement
+
+    jump_stack = []            # List of instruction positions pending to resolve
+
+    classes_stack = []         # Used when calling class instance functions
 
     # Function addresses remaining in the quadruples, filled when function is declared
     remaining_functions = {}
 
+    # Used for skipping declarations and avoid executing them unless called
     declaration_jump = None
 
     @property
     def variables_table(self):
+        """The table of variables available from the actual context."""
         table = globals.variables_table
         if self.class_context is not None:
             table = {**table, **table[self.class_context]}
@@ -54,6 +65,7 @@ class Quadruples(Visitor_Recursive):
 
     @property
     def current_variables_table(self):
+        """The table of variables from the current and only the current scope."""
         table = globals.variables_table
         if self.class_context is not None:
             table = table[self.class_context]
@@ -63,6 +75,7 @@ class Quadruples(Visitor_Recursive):
 
     @property
     def functions_directory(self):
+        """The directory of functions available from the actual context."""
         directory = globals.functions_directory
         if self.class_context is not None:
             directory = directory[self.class_context]
@@ -70,21 +83,31 @@ class Quadruples(Visitor_Recursive):
 
     @property
     def current_functions_directory(self):
+        """The directory of functions in the current and only the current scope."""
         directory = globals.functions_directory
         if self.class_context is not None:
             directory = {**directory, **directory[self.class_context]}
         return directory
 
     def class_id(self, tree: Tree):
+        """Set the class context to indicate we are now inside a class.
+        `class_id: CLASS_ID`
+        """
         self.declaration_jump = create_declaration_jump(self)
         class_id = tree.children[0].value
         self.class_context = class_id
 
     def class_declaration(self, _tree: Tree):
+        """Once we finish traversing the class, indicate that we are now outside.
+        `class_id: CLASS_ID`
+        """
         restore_declaration_jump(self)
         self.class_context = None
 
     def function_id(self, tree: Tree):
+        """Set the function context to indicate we are now inside a function.
+        \n`function_id: FUNCTION_ID`
+        """
         # Declare jump to not execute on first load
         if self.declaration_jump is None:
             self.declaration_jump = create_declaration_jump(self)
@@ -96,6 +119,9 @@ class Quadruples(Visitor_Recursive):
         self.function_context = function_id
 
     def function_declaration(self, _tree: Tree):
+        """Once we finish traversing the function, indicate that we are now outside.
+        `function_declaration: (FUNCTION_DECLARE | declaration_type) function_id _OPEN_GROUP _function_parameters _CLOSE_GROUP _OPEN_BLOCK function_body _CLOSE_BLOCK`
+        """
         end_quadruple = (FunctionOperators.RETURN,)
         self.quadruples.append(end_quadruple)
         restore_declaration_jump(self)

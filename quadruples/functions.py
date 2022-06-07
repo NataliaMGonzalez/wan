@@ -5,6 +5,12 @@ from quadruples.remaining_functions import set_function_remaining
 
 
 def function_eval(self, tree: Tree):
+    """Create all of the quadruples required on function evaluation.
+
+    On function evaluation, create all of the quadruples for setting the parameters,
+    creating the memory copy, calling the function, returning from the function
+    and restoring the memory.
+    """
     id_token, *argument_tokens = tree.children
     id: str = id_token.value
     vars_table: OrderedDict = self.current_variables_table
@@ -64,6 +70,11 @@ def function_eval(self, tree: Tree):
 
 
 def return_statement(self, _tree: Tree):
+    """Create the quadruples for returning a value from a function.
+
+    Set the value of the expression into the function return specified address,
+    update it and move to the last instruction pointer before entering the function.
+    """
     func_directory: OrderedDict = self.functions_directory
     function_attributes = func_directory[self.function_context]
     end_quadruple = (FunctionOperators.RETURN,)

@@ -1,4 +1,3 @@
-from ctypes import pointer
 from addresses_manager import assign_into_extra_segment, assign_temporal
 import globals
 from typing import Union
@@ -10,8 +9,10 @@ primitive_types = set(type.value for type in DataTypes)
 
 
 def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
-    """
-    When reading a class instance, get the address from its variables table.
+    """Create the quadruples for getting the value from an instance.
+
+    When reading an instance variable, get the address from its variables table
+    or from the function inside of the class.
     `instance_attribute: var_exp _INSTANCE_ATTRIBUTE (VAR_ID | function_eval)`
     """
     _, var_or_function = tree.children
@@ -47,6 +48,14 @@ def get_instance_attribute(self, tree: Union[Token, Tree]) -> int:
 
 
 def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str]:
+    """Create the quadruples to read from the class the execution is in.
+
+    When reading an attribute from within a class, get it's variables table
+    and place the corresponding quadruple. The context of which instance we are
+    inside from is unknown.
+
+    `self_attribute: _SELF_ATTRIBUTE _INSTANCE_ATTRIBUTE (VAR_ID | self_function)`
+    """
     var_or_function = self_attribute.children[0]
     class_type = self.class_context
 
@@ -73,6 +82,11 @@ def get_self_attribute(self, self_attribute: Tree) -> Union[ClassOperations, str
 
 
 def np_set_self_function(self, _tree: Tree):
+    """Set the quadruples for setting the instance context for self function.
+
+    When going into a self function `my:function()`, create a quadruple to
+    set the current class context into the class we are inside in.
+    """
     if self.class_context == None:
         raise Exception("Cannot call self attribute in global scope.")
     quadruple = (ClassOperations.SET_FUNCTION_CLASS,
@@ -83,11 +97,21 @@ def np_set_self_function(self, _tree: Tree):
 
 
 def np_clear_self_function(self, _tree: Tree):
+    """Set the quadruples for clearing the instance context for self function.
+
+    When exiting out of a self function `my:function()`, create a quadruple to
+    clear the current class context for the function to be executed in.
+    """
     quadruple = (ClassOperations.CLEAR_FUNCTION_CLASS,)
     self.quadruples.append(quadruple)
 
 
 def np_set_class_function(self, _tree: Tree):
+    """Set the quadruples for setting the instance context for instance function.
+
+    When going into an instance function `instance:function()`, create a
+    quadruple to set the current class context into the previously checked class.
+    """
     class_address = self.addresses_stack[-1]
     quadruple = (ClassOperations.SET_FUNCTION_CLASS, class_address)
     vars_table = self.current_variables_table
@@ -97,5 +121,10 @@ def np_set_class_function(self, _tree: Tree):
 
 
 def np_clear_class_function(self, _tree: Tree):
+    """Set the quadruples for clearing the instance context for instance function.
+
+    When exiting out of an instance function `instance:function()`, create a
+    quadruple to clear the current class context for the function to be executed in.
+    """
     quadruple = (ClassOperations.CLEAR_FUNCTION_CLASS,)
     self.quadruples.append(quadruple)

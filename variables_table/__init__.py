@@ -148,3 +148,11 @@ def instantiate_class(self, class_type: str) -> int:
         sizes = class_variables[variable]["sizes"]
         add_variable_to_table(self, instance_table, var_type, var_name, sizes)
     return new_address
+
+
+def get_variable_size(table: OrderedDict, address: int) -> bool:
+    """Indicates if the given address is the starting point of an array."""
+    if (address, "size") not in table:
+        return 1
+    sizes = table[(address, "size")]
+    return int(prod(sizes))

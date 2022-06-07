@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from lark import Tree
+from variables_table import get_variable_size
 from enums import FunctionOperators
 from quadruples.remaining_functions import set_function_remaining
 
@@ -14,7 +15,11 @@ def function_eval(self, tree: Tree):
     id_token, *argument_tokens = tree.children
     id: str = id_token.value
     vars_table: OrderedDict = self.current_variables_table
+
+    # Get and filter the vars addresses
     vars_addresses: list[int] = list(vars_table.values())
+    def is_not_array(a): return not isinstance(a, list)
+    vars_addresses: list[int] = list(filter(is_not_array, vars_addresses))
 
     func_directory: OrderedDict = self.functions_directory
     function_attributes = None
@@ -38,8 +43,11 @@ def function_eval(self, tree: Tree):
     # Save all of the current variables in a stack to for later restoration
     if self.function_context != None:
         for address in vars_addresses:
-            save_state_quadruple = (FunctionOperators.PUSH_IN_STACK, address)
-            self.quadruples.append(save_state_quadruple)
+            size = get_variable_size(vars_table, address)
+            for i in range(size):
+                save_state_quadruple = (
+                    FunctionOperators.PUSH_IN_STACK, address + i)
+                self.quadruples.append(save_state_quadruple)
         for addresses in temporals_saved:
             save_state_quadruple = (FunctionOperators.PUSH_IN_STACK, addresses)
             self.quadruples.append(save_state_quadruple)
@@ -65,8 +73,12 @@ def function_eval(self, tree: Tree):
                 FunctionOperators.PULL_FROM_STACK, address)
             self.quadruples.append(save_state_quadruple)
         for address in vars_addresses[::-1]:
-            retreival_quadruple = (FunctionOperators.PULL_FROM_STACK, address)
-            self.quadruples.append(retreival_quadruple)
+            size = get_variable_size(vars_table, address)
+            for i in range(size):
+                address_index = address + size - i - 1
+                retreival_quadruple = (
+                    FunctionOperators.PULL_FROM_STACK, address_index)
+                self.quadruples.append(retreival_quadruple)
 
 
 def return_statement(self, _tree: Tree):

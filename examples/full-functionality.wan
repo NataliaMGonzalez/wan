@@ -9,8 +9,8 @@ class Bender {
 Waterbender katara;
 
 Weapon boomerang;
-print("Attack damage of the boomerang:");
-boomerang:attack_damage = input();
+# print("Attack damage of the boomerang:");
+# boomerang:attack_damage = input();
 
 katara:weapon = boomerang;
 
@@ -19,7 +19,6 @@ class Waterbender << Bender {
   Weapon weapon;
 
   action waterFreeze() {
-    print(my:power);
     if (my:power + my:weapon:attack_damage > 10) {
       print("The water froze.");
     } else {
@@ -50,6 +49,24 @@ class Mathematician {
 }
 
 int strength, proficiency, intelligence;
-print("Katara power:");
-katara:power = input();
-katara:waterFreeze();
+# print("Katara power:");
+# katara:power = input();
+# katara:waterFreeze();
+
+Firebender zuko;
+zuko:power = input();
+Firebender azula;
+azula:power = input();
+agniKai(zuko, azula);
+
+action agniKai(Firebender a, Firebender b) {
+  if (a:power == b:power) {
+    print("Tie!");
+  }
+  if (a:power > b:power) {
+    print("A wins!");
+  }
+  if (a:power < b:power) {
+    print("B wins!");
+  }
+}

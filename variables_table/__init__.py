@@ -1,6 +1,6 @@
 import globals
 from typing import List
-from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_temporal, is_temporal
+from addresses_manager import assign_instance_to_memory, assign_primitive_to_memory, assign_temporal, is_primitive, is_temporal
 from collections import OrderedDict
 from lark import Tree
 from lark.visitors import Visitor_Recursive
@@ -80,15 +80,25 @@ class VariablesTable(Visitor_Recursive):
         """Assign parameter in variables table and add it to the function's table.
         `function_parameter: declaration_type VAR_ID`
         """
-        var_type, var_name, *size_tokens = tree.children
-        var_type = DataTypes(var_type.value)
+        var_type_token, var_name, *size_tokens = tree.children
+        table = self.current_table
+
+        var_type = None
+        if var_type_token.value in primitive_types:
+            var_type = DataTypes(var_type_token.value)
+        else:
+            var_type = DataTypes.CLASS
+
         new_address = None
         is_array = len(size_tokens) > 0
-        if not is_array:
+        if var_type == DataTypes.CLASS:
+            new_address = assign_instance_to_memory()
+            table[(new_address, "type")] = var_type_token.value
+        elif not is_array:
             new_address = assign_primitive_to_memory(var_type)
         else:
             new_address = assign_temporal(var_type)
-        table = self.current_table
+
         table[var_name.value] = new_address
         if is_array:
             sizes = list(map(lambda s: int(s.value), size_tokens))
